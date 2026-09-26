@@ -1,0 +1,1264 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1" name="viewport"/>
+<title>AV-IRE: Audio-Visual Subject Removal Demo</title>
+<meta content="Anonymous qualitative comparison of instruction-conditioned audio-visual subject removal systems." name="description"/>
+<link href="data:image/svg+xml,%3Csvg viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%23294bc4'/%3E%3Cpath d='M16 44 28 18h8l12 26h-8l-2.4-6H26.2L24 44zm12.8-13h6.1L32 23.7z' fill='white'/%3E%3C/svg%3E" rel="icon" type="image/svg+xml"/>
+<style>
+:root { color-scheme: light dark; --bg:#f4f6f8; --panel:#ffffff; --text:#17202a; --muted:#5d6873; --line:#dbe1e6; --accent:#294bc4; --pass:#147744; --fail:#b42318; --warn:#9a5400; --soft:#eef2ff; }
+@media (prefers-color-scheme:dark) { :root { --bg:#101419; --panel:#192027; --text:#edf2f7; --muted:#acb7c2; --line:#34404c; --accent:#91a7ff; --pass:#67d69d; --fail:#ff8b81; --warn:#ffbd66; --soft:#202a46; } }
+* { box-sizing:border-box; }
+body { margin:0; background:var(--bg); color:var(--text); font:16px/1.55 system-ui,-apple-system,"Segoe UI",sans-serif; }
+main { width:min(1460px,96vw); margin:auto; padding:32px 0 64px; }
+header { max-width:940px; margin:0 auto 28px; }
+h1 { font-size:clamp(1.9rem,4vw,3.2rem); line-height:1.08; margin:0 0 14px; letter-spacing:-.035em; }
+h2 { margin:40px 0 8px; font-size:1.7rem; }
+h3 { margin:0; }
+h4 { margin:0 0 10px; font-size:.97rem; }
+p { margin:8px 0; }
+.lede { font-size:1.1rem; color:var(--muted); }
+.notice,.legend,.rule { border:1px solid var(--line); border-radius:14px; padding:16px 18px; background:var(--panel); margin:16px 0; }
+.notice { border-left:5px solid var(--accent); }
+.details { border:1px solid var(--line); border-radius:14px; background:var(--panel); margin:16px 0; }
+.details summary { cursor:pointer; padding:14px 18px; font-weight:750; }
+.details-body { border-top:1px solid var(--line); padding:4px 18px 14px; color:var(--muted); }
+.legend-grid { display:flex; flex-wrap:wrap; gap:8px 16px; margin-top:10px; color:var(--muted); }
+.section-intro { color:var(--muted); max-width:920px; margin-bottom:16px; }
+.case { background:var(--panel); border:1px solid var(--line); border-radius:18px; padding:16px; margin:14px 0; box-shadow:0 8px 26px rgba(20,35,55,.06); }
+.case-head { display:flex; gap:12px; align-items:center; flex-wrap:wrap; margin-bottom:14px; }
+.case-number { font-weight:800; color:var(--accent); }
+code { color:var(--muted); font-size:.86rem; overflow-wrap:anywhere; }
+.case-grid { display:grid; grid-template-columns:minmax(180px,.72fr) repeat(2,minmax(320px,1fr)); gap:14px; align-items:start; }
+.input-column,.query,.case-grid.compact>section { min-width:0; border:1px solid var(--line); border-radius:13px; padding:12px; }
+.query { display:grid; grid-template-columns:1fr 1fr; gap:10px; }
+.query h4 { grid-column:1/-1; }
+.video-label { font-weight:650; font-size:.88rem; margin-bottom:5px; color:var(--muted); }
+video { display:block; width:100%; background:#000; border-radius:9px; aspect-ratio:8/5; object-fit:contain; }
+.badges { display:flex; flex-wrap:wrap; gap:4px; min-height:25px; margin-top:7px; }
+.badge { display:inline-block; font-size:.71rem; font-weight:800; padding:2px 6px; border-radius:999px; border:1px solid currentColor; }
+.posthoc-note { margin:8px 0 0; padding:8px 10px; border-left:3px solid var(--warn); border-radius:4px; background:color-mix(in srgb,var(--warn) 8%,transparent); font-size:.82rem; }
+.pass { color:var(--pass); } .fail { color:var(--fail); } .warn { color:var(--warn); }
+footer { color:var(--muted); border-top:1px solid var(--line); margin-top:44px; padding-top:20px; font-size:.9rem; }
+@media (max-width:1050px) { .case-grid { grid-template-columns:1fr; } .query { grid-template-columns:1fr 1fr; } }
+@media (max-width:620px) { main { width:min(100% - 20px,1460px); padding-top:20px; } .case { padding:11px; } .query { grid-template-columns:1fr; } .query h4 { grid-column:1; } }
+
+.video-block { min-width:0; }
+.neutral { color:var(--muted); }
+.review-note { margin:5px 0 0; color:var(--muted); font-size:.78rem; }
+</style>
+</head>
+<body>
+<main>
+<header>
+<h1>AV-IRE: Instruction-Routed Audio-Visual Subject Removal</h1>
+<p class="lede">Each input contains two audible performers. The two instructions, qA and qB, name different targets in the same recording. A correct edit removes only the instructed performer from both video and audio while preserving the other performer, the background, and all non-target sounds.</p>
+<div class="notice"><strong>How to read each example.</strong> First play the shared input, then compare the five system outputs under qA and qB. Switching from qA to qB changes only the named target. The paired outputs therefore show whether a system follows the instruction rather than applying the same edit to both requests.</div>
+<div class="legend">
+<strong>Blind-review legend</strong>
+<div class="legend-grid">
+<span>
+<b>VR</b> target visually removed</span>
+<span>
+<b>AR</b> target sound removed</span>
+<span>
+<b>VP</b> other performers preserved</span>
+<span>
+<b>AP</b> other sounds preserved</span>
+<span>
+<b>C</b> audio and video consistent</span>
+<span>
+<b>J</b> all five criteria pass</span>
+</div>
+<p>A check means that the displayed system output passed the criterion; a cross means that it did not. <b>J</b> passes only when all five criteria pass for that output. A wrong-source flag means that the edit removed a non-target source.</p>
+</div>
+<details class="details"><summary>Evaluation, media, and anonymity details</summary><div class="details-body">
+<p><strong>Systems and rating scope.</strong> <b>Task-adapted LTX-2.5</b> is the same-backbone control: it uses the LTX-2.5 backbone, a 6,000-step task LoRA, and a target-specific text prompt, but does not use the AV-IRE selector or routing executor. AV-IRE and this control were judged in the final blind-review round. InstructAV2AV badges report an earlier blind-review round on the same Natural-2 queries. Kiwi-Edit to CoherentAVEdit and LTX-2.5 no-LoRA are labeled “automatic evaluation only” because this displayed subset has no human ratings for those systems.</p>
+<p><strong>Example selection.</strong> Section 1 contains all five inputs for which AV-IRE passed both target requests in the final blind review. Section 2 contains six inputs selected with a fixed random seed and kept regardless of outcome. These examples provide qualitative comparisons; aggregate results and statistical analyses are reported in the paper, and the complete item-level judgments are included in the supplementary material.</p>
+<p><strong>Media provenance.</strong> AV-IRE and task-adapted LTX-2.5 reuse the exact outputs shown in the final blind review. InstructAV2AV reuses the exact outputs from an earlier blind-review round on the same queries. LTX-2.5 no-LoRA reuses its evaluation outputs. Kiwi-Edit to CoherentAVEdit outputs were converted from MP4V to H.264 only for browser playback; the underlying frames and audio were not regenerated. Every input is shown as 121 frames at 30 fps, matching the output window.</p>
+<p><strong>Anonymity.</strong> This page contains no author names, affiliations, external links, or analytics code. All media and styles are served with the page.</p>
+</div></details>
+</header>
+<section>
+<h2>1. AV-IRE succeeds on both target requests</h2>
+<p class="section-intro">All 5 of 30 Natural-2 inputs for which AV-IRE passed both qA and qB in the final blind review.</p>
+<article class="case">
+<div class="case-head">
+<span class="case-number">Example 01</span>
+<code>MUSIC-AVQA__00002968__w47</code>
+</div>
+<div class="case-grid">
+<section class="input-column">
+<h4>Input</h4>
+<div class="video-block">
+<div class="video-label">Original clip</div>
+<video controls="" playsinline="" preload="metadata" src="media/n2_01_input.mp4">
+</video>
+<div class="badges">
+</div>
+</div>
+</section>
+<section class="query">
+<h4>qA: Remove the banjo music from the scene: erase it from the video and remove its sound from the audio, while keeping everything else, including the background and all other sounds, unchanged.</h4>
+<div class="video-block">
+<div class="video-label">AV-IRE</div>
+<video controls="" playsinline="" preload="metadata" src="media/n2_01_qA_avire.mp4">
+</video>
+<div class="badges">
+<span class="badge pass">VR ✓</span>
+<span class="badge pass">AR ✓</span>
+<span class="badge pass">VP ✓</span>
+<span class="badge pass">AP ✓</span>
+<span class="badge pass">C ✓</span>
+<span class="badge pass">J ✓</span>
+</div>
+</div>
+<div class="video-block">
+<div class="video-label">Task-adapted LTX-2.5 (same-backbone control)</div>
+<video controls="" playsinline="" preload="metadata" src="media/n2_01_qA_control.mp4">
+</video>
+<div class="badges">
+<span class="badge pass">VR ✓</span>
+<span class="badge pass">AR ✓</span>
+<span class="badge pass">VP ✓</span>
+<span class="badge pass">AP ✓</span>
+<span class="badge pass">C ✓</span>
+<span class="badge pass">J ✓</span>
+</div>
+<p class="posthoc-note"><span class="badge fail">Post-hoc: wrong source removed</span> <strong>Author observation, not used in aggregate scores:</strong> this conflicts with the frozen all-pass rating shown above; the original reviewer has not yet confirmed a corrected item-level score.</p>
+</div>
+<div class="video-block added-baseline">
+<div class="video-label">InstructAV2AV</div>
+<video controls="" playsinline="" preload="metadata" src="media/n2_01_qA_instructav2av.mp4"></video>
+<div class="badges"><span class="badge fail">VR ✗</span><span class="badge pass">AR ✓</span><span class="badge pass">VP ✓</span><span class="badge pass">AP ✓</span><span class="badge pass">C ✓</span><span class="badge fail">J ✗</span></div>
+<p class="review-note">Earlier blind-review round.</p>
+</div><div class="video-block added-baseline">
+<div class="video-label">Kiwi-Edit to CoherentAVEdit cascade</div>
+<video controls="" playsinline="" preload="metadata" src="media/n2_01_qA_kiwi_cascade.mp4"></video>
+<div class="badges"><span class="badge neutral">automatic evaluation only</span></div>
+<p class="review-note">H.264 playback copy; exact MP4V original retained.</p>
+</div><div class="video-block added-baseline">
+<div class="video-label">LTX-2.5 no-LoRA</div>
+<video controls="" playsinline="" preload="metadata" src="media/n2_01_qA_ltx_nolora.mp4"></video>
+<div class="badges"><span class="badge neutral">automatic evaluation only</span></div>
+</div></section>
+<section class="query">
+<h4>qB: Remove the violin music from the scene: erase it from the video and remove its sound from the audio, while keeping everything else, including the background and all other sounds, unchanged.</h4>
+<div class="video-block">
+<div class="video-label">AV-IRE</div>
+<video controls="" playsinline="" preload="metadata" src="media/n2_01_qB_avire.mp4">
+</video>
+<div class="badges">
+<span class="badge pass">VR ✓</span>
+<span class="badge pass">AR ✓</span>
+<span class="badge pass">VP ✓</span>
+<span class="badge pass">AP ✓</span>
+<span class="badge pass">C ✓</span>
+<span class="badge pass">J ✓</span>
+</div>
+</div>
+<div class="video-block">
+<div class="video-label">Task-adapted LTX-2.5 (same-backbone control)</div>
+<video controls="" playsinline="" preload="metadata" src="media/n2_01_qB_control.mp4">
+</video>
+<div class="badges">
+<span class="badge pass">VR ✓</span>
+<span class="badge pass">AR ✓</span>
+<span class="badge pass">VP ✓</span>
+<span class="badge fail">AP ✗</span>
+<span class="badge pass">C ✓</span>
+<span class="badge fail">J ✗</span>
+</div>
+</div>
+<div class="video-block added-baseline">
+<div class="video-label">InstructAV2AV</div>
+<video controls="" playsinline="" preload="metadata" src="media/n2_01_qB_instructav2av.mp4"></video>
+<div class="badges"><span class="badge fail">VR ✗</span><span class="badge pass">AR ✓</span><span class="badge pass">VP ✓</span><span class="badge pass">AP ✓</span><span class="badge pass">C ✓</span><span class="badge fail">J ✗</span></div>
+<p class="review-note">Earlier blind-review round.</p>
+</div><div class="video-block added-baseline">
+<div class="video-label">Kiwi-Edit to CoherentAVEdit cascade</div>
+<video controls="" playsinline="" preload="metadata" src="media/n2_01_qB_kiwi_cascade.mp4"></video>
+<div class="badges"><span class="badge neutral">automatic evaluation only</span></div>
+<p class="review-note">H.264 playback copy; exact MP4V original retained.</p>
+</div><div class="video-block added-baseline">
+<div class="video-label">LTX-2.5 no-LoRA</div>
+<video controls="" playsinline="" preload="metadata" src="media/n2_01_qB_ltx_nolora.mp4"></video>
+<div class="badges"><span class="badge neutral">automatic evaluation only</span></div>
+</div></section>
+</div>
+</article>
+<article class="case">
+<div class="case-head">
+<span class="case-number">Example 02</span>
+<code>MUSIC-AVQA__00003036__w47</code>
+</div>
+<div class="case-grid">
+<section class="input-column">
+<h4>Input</h4>
+<div class="video-block">
+<div class="video-label">Original clip</div>
+<video controls="" playsinline="" preload="metadata" src="media/n2_02_input.mp4">
+</video>
+<div class="badges">
+</div>
+</div>
+</section>
+<section class="query">
+<h4>qA: Remove the accordion music from the scene: erase it from the video and remove its sound from the audio, while keeping everything else, including the background and all other sounds, unchanged.</h4>
+<div class="video-block">
+<div class="video-label">AV-IRE</div>
+<video controls="" playsinline="" preload="metadata" src="media/n2_02_qA_avire.mp4">
+</video>
+<div class="badges">
+<span class="badge pass">VR ✓</span>
+<span class="badge pass">AR ✓</span>
+<span class="badge pass">VP ✓</span>
+<span class="badge pass">AP ✓</span>
+<span class="badge pass">C ✓</span>
+<span class="badge pass">J ✓</span>
+</div>
+</div>
+<div class="video-block">
+<div class="video-label">Task-adapted LTX-2.5 (same-backbone control)</div>
+<video controls="" playsinline="" preload="metadata" src="media/n2_02_qA_control.mp4">
+</video>
+<div class="badges">
+<span class="badge fail">VR ✗</span>
+<span class="badge pass">AR ✓</span>
+<span class="badge pass">VP ✓</span>
+<span class="badge fail">AP ✗</span>
+<span class="badge fail">C ✗</span>
+<span class="badge fail">J ✗</span>
+</div>
+</div>
+<div class="video-block added-baseline">
+<div class="video-label">InstructAV2AV</div>
+<video controls="" playsinline="" preload="metadata" src="media/n2_02_qA_instructav2av.mp4"></video>
+<div class="badges"><span class="badge fail">VR ✗</span><span class="badge pass">AR ✓</span><span class="badge pass">VP ✓</span><span class="badge pass">AP ✓</span><span class="badge fail">C ✗</span><span class="badge fail">J ✗</span></div>
+<p class="review-note">Earlier blind-review round.</p>
+</div><div class="video-block added-baseline">
+<div class="video-label">Kiwi-Edit to CoherentAVEdit cascade</div>
+<video controls="" playsinline="" preload="metadata" src="media/n2_02_qA_kiwi_cascade.mp4"></video>
+<div class="badges"><span class="badge neutral">automatic evaluation only</span></div>
+<p class="review-note">H.264 playback copy; exact MP4V original retained.</p>
+</div><div class="video-block added-baseline">
+<div class="video-label">LTX-2.5 no-LoRA</div>
+<video controls="" playsinline="" preload="metadata" src="media/n2_02_qA_ltx_nolora.mp4"></video>
+<div class="badges"><span class="badge neutral">automatic evaluation only</span></div>
+</div></section>
+<section class="query">
+<h4>qB: Remove the trumpet music from the scene: erase it from the video and remove its sound from the audio, while keeping everything else, including the background and all other sounds, unchanged.</h4>
+<div class="video-block">
+<div class="video-label">AV-IRE</div>
+<video controls="" playsinline="" preload="metadata" src="media/n2_02_qB_avire.mp4">
+</video>
+<div class="badges">
+<span class="badge pass">VR ✓</span>
+<span class="badge pass">AR ✓</span>
+<span class="badge pass">VP ✓</span>
+<span class="badge pass">AP ✓</span>
+<span class="badge pass">C ✓</span>
+<span class="badge pass">J ✓</span>
+</div>
+</div>
+<div class="video-block">
+<div class="video-label">Task-adapted LTX-2.5 (same-backbone control)</div>
+<video controls="" playsinline="" preload="metadata" src="media/n2_02_qB_control.mp4">
+</video>
+<div class="badges">
+<span class="badge fail">VR ✗</span>
+<span class="badge fail">AR ✗</span>
+<span class="badge pass">VP ✓</span>
+<span class="badge fail">AP ✗</span>
+<span class="badge fail">C ✗</span>
+<span class="badge fail">J ✗</span>
+<span class="badge warn">wrong source (audio)</span>
+</div>
+</div>
+<div class="video-block added-baseline">
+<div class="video-label">InstructAV2AV</div>
+<video controls="" playsinline="" preload="metadata" src="media/n2_02_qB_instructav2av.mp4"></video>
+<div class="badges"><span class="badge fail">VR ✗</span><span class="badge fail">AR ✗</span><span class="badge fail">VP ✗</span><span class="badge pass">AP ✓</span><span class="badge fail">C ✗</span><span class="badge fail">J ✗</span><span class="badge fail">wrong source: video</span></div>
+<p class="review-note">Earlier blind-review round.</p>
+</div><div class="video-block added-baseline">
+<div class="video-label">Kiwi-Edit to CoherentAVEdit cascade</div>
+<video controls="" playsinline="" preload="metadata" src="media/n2_02_qB_kiwi_cascade.mp4"></video>
+<div class="badges"><span class="badge neutral">automatic evaluation only</span></div>
+<p class="review-note">H.264 playback copy; exact MP4V original retained.</p>
+</div><div class="video-block added-baseline">
+<div class="video-label">LTX-2.5 no-LoRA</div>
+<video controls="" playsinline="" preload="metadata" src="media/n2_02_qB_ltx_nolora.mp4"></video>
+<div class="badges"><span class="badge neutral">automatic evaluation only</span></div>
+</div></section>
+</div>
+</article>
+<article class="case">
+<div class="case-head">
+<span class="case-number">Example 03</span>
+<code>MUSIC-AVQA__00003114__w47</code>
+</div>
+<div class="case-grid">
+<section class="input-column">
+<h4>Input</h4>
+<div class="video-block">
+<div class="video-label">Original clip</div>
+<video controls="" playsinline="" preload="metadata" src="media/n2_03_input.mp4">
+</video>
+<div class="badges">
+</div>
+</div>
+</section>
+<section class="query">
+<h4>qA: Remove the piano music from the scene: erase it from the video and remove its sound from the audio, while keeping everything else, including the background and all other sounds, unchanged.</h4>
+<div class="video-block">
+<div class="video-label">AV-IRE</div>
+<video controls="" playsinline="" preload="metadata" src="media/n2_03_qA_avire.mp4">
+</video>
+<div class="badges">
+<span class="badge pass">VR ✓</span>
+<span class="badge pass">AR ✓</span>
+<span class="badge pass">VP ✓</span>
+<span class="badge pass">AP ✓</span>
+<span class="badge pass">C ✓</span>
+<span class="badge pass">J ✓</span>
+</div>
+</div>
+<div class="video-block">
+<div class="video-label">Task-adapted LTX-2.5 (same-backbone control)</div>
+<video controls="" playsinline="" preload="metadata" src="media/n2_03_qA_control.mp4">
+</video>
+<div class="badges">
+<span class="badge fail">VR ✗</span>
+<span class="badge fail">AR ✗</span>
+<span class="badge pass">VP ✓</span>
+<span class="badge fail">AP ✗</span>
+<span class="badge fail">C ✗</span>
+<span class="badge fail">J ✗</span>
+</div>
+</div>
+<div class="video-block added-baseline">
+<div class="video-label">InstructAV2AV</div>
+<video controls="" playsinline="" preload="metadata" src="media/n2_03_qA_instructav2av.mp4"></video>
+<div class="badges"><span class="badge fail">VR ✗</span><span class="badge pass">AR ✓</span><span class="badge fail">VP ✗</span><span class="badge fail">AP ✗</span><span class="badge fail">C ✗</span><span class="badge fail">J ✗</span></div>
+<p class="review-note">Earlier blind-review round.</p>
+</div><div class="video-block added-baseline">
+<div class="video-label">Kiwi-Edit to CoherentAVEdit cascade</div>
+<video controls="" playsinline="" preload="metadata" src="media/n2_03_qA_kiwi_cascade.mp4"></video>
+<div class="badges"><span class="badge neutral">automatic evaluation only</span></div>
+<p class="review-note">H.264 playback copy; exact MP4V original retained.</p>
+</div><div class="video-block added-baseline">
+<div class="video-label">LTX-2.5 no-LoRA</div>
+<video controls="" playsinline="" preload="metadata" src="media/n2_03_qA_ltx_nolora.mp4"></video>
+<div class="badges"><span class="badge neutral">automatic evaluation only</span></div>
+</div></section>
+<section class="query">
+<h4>qB: Remove the bassoon music from the scene: erase it from the video and remove its sound from the audio, while keeping everything else, including the background and all other sounds, unchanged.</h4>
+<div class="video-block">
+<div class="video-label">AV-IRE</div>
+<video controls="" playsinline="" preload="metadata" src="media/n2_03_qB_avire.mp4">
+</video>
+<div class="badges">
+<span class="badge pass">VR ✓</span>
+<span class="badge pass">AR ✓</span>
+<span class="badge pass">VP ✓</span>
+<span class="badge pass">AP ✓</span>
+<span class="badge pass">C ✓</span>
+<span class="badge pass">J ✓</span>
+</div>
+</div>
+<div class="video-block">
+<div class="video-label">Task-adapted LTX-2.5 (same-backbone control)</div>
+<video controls="" playsinline="" preload="metadata" src="media/n2_03_qB_control.mp4">
+</video>
+<div class="badges">
+<span class="badge fail">VR ✗</span>
+<span class="badge pass">AR ✓</span>
+<span class="badge pass">VP ✓</span>
+<span class="badge fail">AP ✗</span>
+<span class="badge fail">C ✗</span>
+<span class="badge fail">J ✗</span>
+</div>
+</div>
+<div class="video-block added-baseline">
+<div class="video-label">InstructAV2AV</div>
+<video controls="" playsinline="" preload="metadata" src="media/n2_03_qB_instructav2av.mp4"></video>
+<div class="badges"><span class="badge pass">VR ✓</span><span class="badge pass">AR ✓</span><span class="badge pass">VP ✓</span><span class="badge fail">AP ✗</span><span class="badge fail">C ✗</span><span class="badge fail">J ✗</span></div>
+<p class="review-note">Earlier blind-review round.</p>
+</div><div class="video-block added-baseline">
+<div class="video-label">Kiwi-Edit to CoherentAVEdit cascade</div>
+<video controls="" playsinline="" preload="metadata" src="media/n2_03_qB_kiwi_cascade.mp4"></video>
+<div class="badges"><span class="badge neutral">automatic evaluation only</span></div>
+<p class="review-note">H.264 playback copy; exact MP4V original retained.</p>
+</div><div class="video-block added-baseline">
+<div class="video-label">LTX-2.5 no-LoRA</div>
+<video controls="" playsinline="" preload="metadata" src="media/n2_03_qB_ltx_nolora.mp4"></video>
+<div class="badges"><span class="badge neutral">automatic evaluation only</span></div>
+</div></section>
+</div>
+</article>
+<article class="case">
+<div class="case-head">
+<span class="case-number">Example 04</span>
+<code>MUSIC-AVQA__00003427__w32</code>
+</div>
+<div class="case-grid">
+<section class="input-column">
+<h4>Input</h4>
+<div class="video-block">
+<div class="video-label">Original clip</div>
+<video controls="" playsinline="" preload="metadata" src="media/n2_04_input.mp4">
+</video>
+<div class="badges">
+</div>
+</div>
+</section>
+<section class="query">
+<h4>qA: Remove the ukulele music from the scene: erase it from the video and remove its sound from the audio, while keeping everything else, including the background and all other sounds, unchanged.</h4>
+<div class="video-block">
+<div class="video-label">AV-IRE</div>
+<video controls="" playsinline="" preload="metadata" src="media/n2_04_qA_avire.mp4">
+</video>
+<div class="badges">
+<span class="badge pass">VR ✓</span>
+<span class="badge pass">AR ✓</span>
+<span class="badge pass">VP ✓</span>
+<span class="badge pass">AP ✓</span>
+<span class="badge pass">C ✓</span>
+<span class="badge pass">J ✓</span>
+</div>
+</div>
+<div class="video-block">
+<div class="video-label">Task-adapted LTX-2.5 (same-backbone control)</div>
+<video controls="" playsinline="" preload="metadata" src="media/n2_04_qA_control.mp4">
+</video>
+<div class="badges">
+<span class="badge fail">VR ✗</span>
+<span class="badge fail">AR ✗</span>
+<span class="badge pass">VP ✓</span>
+<span class="badge fail">AP ✗</span>
+<span class="badge fail">C ✗</span>
+<span class="badge fail">J ✗</span>
+<span class="badge warn">wrong source (audio)</span>
+</div>
+</div>
+<div class="video-block added-baseline">
+<div class="video-label">InstructAV2AV</div>
+<video controls="" playsinline="" preload="metadata" src="media/n2_04_qA_instructav2av.mp4"></video>
+<div class="badges"><span class="badge fail">VR ✗</span><span class="badge fail">AR ✗</span><span class="badge pass">VP ✓</span><span class="badge pass">AP ✓</span><span class="badge fail">C ✗</span><span class="badge fail">J ✗</span></div>
+<p class="review-note">Earlier blind-review round.</p>
+</div><div class="video-block added-baseline">
+<div class="video-label">Kiwi-Edit to CoherentAVEdit cascade</div>
+<video controls="" playsinline="" preload="metadata" src="media/n2_04_qA_kiwi_cascade.mp4"></video>
+<div class="badges"><span class="badge neutral">automatic evaluation only</span></div>
+<p class="review-note">H.264 playback copy; exact MP4V original retained.</p>
+</div><div class="video-block added-baseline">
+<div class="video-label">LTX-2.5 no-LoRA</div>
+<video controls="" playsinline="" preload="metadata" src="media/n2_04_qA_ltx_nolora.mp4"></video>
+<div class="badges"><span class="badge neutral">automatic evaluation only</span></div>
+</div></section>
+<section class="query">
+<h4>qB: Remove the clarinet music from the scene: erase it from the video and remove its sound from the audio, while keeping everything else, including the background and all other sounds, unchanged.</h4>
+<div class="video-block">
+<div class="video-label">AV-IRE</div>
+<video controls="" playsinline="" preload="metadata" src="media/n2_04_qB_avire.mp4">
+</video>
+<div class="badges">
+<span class="badge pass">VR ✓</span>
+<span class="badge pass">AR ✓</span>
+<span class="badge pass">VP ✓</span>
+<span class="badge pass">AP ✓</span>
+<span class="badge pass">C ✓</span>
+<span class="badge pass">J ✓</span>
+</div>
+</div>
+<div class="video-block">
+<div class="video-label">Task-adapted LTX-2.5 (same-backbone control)</div>
+<video controls="" playsinline="" preload="metadata" src="media/n2_04_qB_control.mp4">
+</video>
+<div class="badges">
+<span class="badge fail">VR ✗</span>
+<span class="badge pass">AR ✓</span>
+<span class="badge pass">VP ✓</span>
+<span class="badge pass">AP ✓</span>
+<span class="badge fail">C ✗</span>
+<span class="badge fail">J ✗</span>
+</div>
+</div>
+<div class="video-block added-baseline">
+<div class="video-label">InstructAV2AV</div>
+<video controls="" playsinline="" preload="metadata" src="media/n2_04_qB_instructav2av.mp4"></video>
+<div class="badges"><span class="badge fail">VR ✗</span><span class="badge fail">AR ✗</span><span class="badge pass">VP ✓</span><span class="badge pass">AP ✓</span><span class="badge fail">C ✗</span><span class="badge fail">J ✗</span></div>
+<p class="review-note">Earlier blind-review round.</p>
+</div><div class="video-block added-baseline">
+<div class="video-label">Kiwi-Edit to CoherentAVEdit cascade</div>
+<video controls="" playsinline="" preload="metadata" src="media/n2_04_qB_kiwi_cascade.mp4"></video>
+<div class="badges"><span class="badge neutral">automatic evaluation only</span></div>
+<p class="review-note">H.264 playback copy; exact MP4V original retained.</p>
+</div><div class="video-block added-baseline">
+<div class="video-label">LTX-2.5 no-LoRA</div>
+<video controls="" playsinline="" preload="metadata" src="media/n2_04_qB_ltx_nolora.mp4"></video>
+<div class="badges"><span class="badge neutral">automatic evaluation only</span></div>
+</div></section>
+</div>
+</article>
+<article class="case">
+<div class="case-head">
+<span class="case-number">Example 05</span>
+<code>MUSIC-AVQA__00006444__w02</code>
+</div>
+<div class="case-grid">
+<section class="input-column">
+<h4>Input</h4>
+<div class="video-block">
+<div class="video-label">Original clip</div>
+<video controls="" playsinline="" preload="metadata" src="media/n2_05_input.mp4">
+</video>
+<div class="badges">
+</div>
+</div>
+</section>
+<section class="query">
+<h4>qA: Remove the cello music from the scene: erase it from the video and remove its sound from the audio, while keeping everything else, including the background and all other sounds, unchanged.</h4>
+<div class="video-block">
+<div class="video-label">AV-IRE</div>
+<video controls="" playsinline="" preload="metadata" src="media/n2_05_qA_avire.mp4">
+</video>
+<div class="badges">
+<span class="badge pass">VR ✓</span>
+<span class="badge pass">AR ✓</span>
+<span class="badge pass">VP ✓</span>
+<span class="badge pass">AP ✓</span>
+<span class="badge pass">C ✓</span>
+<span class="badge pass">J ✓</span>
+</div>
+</div>
+<div class="video-block">
+<div class="video-label">Task-adapted LTX-2.5 (same-backbone control)</div>
+<video controls="" playsinline="" preload="metadata" src="media/n2_05_qA_control.mp4">
+</video>
+<div class="badges">
+<span class="badge pass">VR ✓</span>
+<span class="badge pass">AR ✓</span>
+<span class="badge fail">VP ✗</span>
+<span class="badge fail">AP ✗</span>
+<span class="badge fail">C ✗</span>
+<span class="badge fail">J ✗</span>
+</div>
+</div>
+<div class="video-block added-baseline">
+<div class="video-label">InstructAV2AV</div>
+<video controls="" playsinline="" preload="metadata" src="media/n2_05_qA_instructav2av.mp4"></video>
+<div class="badges"><span class="badge fail">VR ✗</span><span class="badge pass">AR ✓</span><span class="badge pass">VP ✓</span><span class="badge fail">AP ✗</span><span class="badge fail">C ✗</span><span class="badge fail">J ✗</span></div>
+<p class="review-note">Earlier blind-review round.</p>
+</div><div class="video-block added-baseline">
+<div class="video-label">Kiwi-Edit to CoherentAVEdit cascade</div>
+<video controls="" playsinline="" preload="metadata" src="media/n2_05_qA_kiwi_cascade.mp4"></video>
+<div class="badges"><span class="badge neutral">automatic evaluation only</span></div>
+<p class="review-note">H.264 playback copy; exact MP4V original retained.</p>
+</div><div class="video-block added-baseline">
+<div class="video-label">LTX-2.5 no-LoRA</div>
+<video controls="" playsinline="" preload="metadata" src="media/n2_05_qA_ltx_nolora.mp4"></video>
+<div class="badges"><span class="badge neutral">automatic evaluation only</span></div>
+</div></section>
+<section class="query">
+<h4>qB: Remove the trumpet music from the scene: erase it from the video and remove its sound from the audio, while keeping everything else, including the background and all other sounds, unchanged.</h4>
+<div class="video-block">
+<div class="video-label">AV-IRE</div>
+<video controls="" playsinline="" preload="metadata" src="media/n2_05_qB_avire.mp4">
+</video>
+<div class="badges">
+<span class="badge pass">VR ✓</span>
+<span class="badge pass">AR ✓</span>
+<span class="badge pass">VP ✓</span>
+<span class="badge pass">AP ✓</span>
+<span class="badge pass">C ✓</span>
+<span class="badge pass">J ✓</span>
+</div>
+</div>
+<div class="video-block">
+<div class="video-label">Task-adapted LTX-2.5 (same-backbone control)</div>
+<video controls="" playsinline="" preload="metadata" src="media/n2_05_qB_control.mp4">
+</video>
+<div class="badges">
+<span class="badge pass">VR ✓</span>
+<span class="badge pass">AR ✓</span>
+<span class="badge pass">VP ✓</span>
+<span class="badge fail">AP ✗</span>
+<span class="badge fail">C ✗</span>
+<span class="badge fail">J ✗</span>
+</div>
+</div>
+<div class="video-block added-baseline">
+<div class="video-label">InstructAV2AV</div>
+<video controls="" playsinline="" preload="metadata" src="media/n2_05_qB_instructav2av.mp4"></video>
+<div class="badges"><span class="badge fail">VR ✗</span><span class="badge fail">AR ✗</span><span class="badge pass">VP ✓</span><span class="badge fail">AP ✗</span><span class="badge pass">C ✓</span><span class="badge fail">J ✗</span></div>
+<p class="review-note">Earlier blind-review round.</p>
+</div><div class="video-block added-baseline">
+<div class="video-label">Kiwi-Edit to CoherentAVEdit cascade</div>
+<video controls="" playsinline="" preload="metadata" src="media/n2_05_qB_kiwi_cascade.mp4"></video>
+<div class="badges"><span class="badge neutral">automatic evaluation only</span></div>
+<p class="review-note">H.264 playback copy; exact MP4V original retained.</p>
+</div><div class="video-block added-baseline">
+<div class="video-label">LTX-2.5 no-LoRA</div>
+<video controls="" playsinline="" preload="metadata" src="media/n2_05_qB_ltx_nolora.mp4"></video>
+<div class="badges"><span class="badge neutral">automatic evaluation only</span></div>
+</div></section>
+</div>
+</article>
+</section>
+<section>
+<h2>2. Fixed-seed random inputs</h2>
+<p class="section-intro">Six inputs sampled from the 30 Natural-2 inputs after sorting their identifiers, using the fixed seed 20260925. No input was excluded because of its outcome.</p>
+<article class="case">
+<div class="case-head">
+<span class="case-number">Example 06</span>
+<code>MUSIC-AVQA__00003811__w47</code>
+</div>
+<div class="case-grid">
+<section class="input-column">
+<h4>Input</h4>
+<div class="video-block">
+<div class="video-label">Original clip</div>
+<video controls="" playsinline="" preload="metadata" src="media/n2_06_input.mp4">
+</video>
+<div class="badges">
+</div>
+</div>
+</section>
+<section class="query">
+<h4>qA: Remove the flute music from the scene: erase it from the video and remove its sound from the audio, while keeping everything else, including the background and all other sounds, unchanged.</h4>
+<div class="video-block">
+<div class="video-label">AV-IRE</div>
+<video controls="" playsinline="" preload="metadata" src="media/n2_06_qA_avire.mp4">
+</video>
+<div class="badges">
+<span class="badge pass">VR ✓</span>
+<span class="badge pass">AR ✓</span>
+<span class="badge pass">VP ✓</span>
+<span class="badge pass">AP ✓</span>
+<span class="badge pass">C ✓</span>
+<span class="badge pass">J ✓</span>
+</div>
+</div>
+<div class="video-block">
+<div class="video-label">Task-adapted LTX-2.5 (same-backbone control)</div>
+<video controls="" playsinline="" preload="metadata" src="media/n2_06_qA_control.mp4">
+</video>
+<div class="badges">
+<span class="badge pass">VR ✓</span>
+<span class="badge pass">AR ✓</span>
+<span class="badge pass">VP ✓</span>
+<span class="badge pass">AP ✓</span>
+<span class="badge pass">C ✓</span>
+<span class="badge pass">J ✓</span>
+</div>
+</div>
+<div class="video-block added-baseline">
+<div class="video-label">InstructAV2AV</div>
+<video controls="" playsinline="" preload="metadata" src="media/n2_06_qA_instructav2av.mp4"></video>
+<div class="badges"><span class="badge fail">VR ✗</span><span class="badge fail">AR ✗</span><span class="badge fail">VP ✗</span><span class="badge fail">AP ✗</span><span class="badge fail">C ✗</span><span class="badge fail">J ✗</span><span class="badge fail">wrong source: video</span><span class="badge fail">wrong source: audio</span></div>
+<p class="review-note">Earlier blind-review round.</p>
+</div><div class="video-block added-baseline">
+<div class="video-label">Kiwi-Edit to CoherentAVEdit cascade</div>
+<video controls="" playsinline="" preload="metadata" src="media/n2_06_qA_kiwi_cascade.mp4"></video>
+<div class="badges"><span class="badge neutral">automatic evaluation only</span></div>
+<p class="review-note">H.264 playback copy; exact MP4V original retained.</p>
+</div><div class="video-block added-baseline">
+<div class="video-label">LTX-2.5 no-LoRA</div>
+<video controls="" playsinline="" preload="metadata" src="media/n2_06_qA_ltx_nolora.mp4"></video>
+<div class="badges"><span class="badge neutral">automatic evaluation only</span></div>
+</div></section>
+<section class="query">
+<h4>qB: Remove the electric bass music from the scene: erase it from the video and remove its sound from the audio, while keeping everything else, including the background and all other sounds, unchanged.</h4>
+<div class="video-block">
+<div class="video-label">AV-IRE</div>
+<video controls="" playsinline="" preload="metadata" src="media/n2_06_qB_avire.mp4">
+</video>
+<div class="badges">
+<span class="badge pass">VR ✓</span>
+<span class="badge fail">AR ✗</span>
+<span class="badge pass">VP ✓</span>
+<span class="badge fail">AP ✗</span>
+<span class="badge fail">C ✗</span>
+<span class="badge fail">J ✗</span>
+<span class="badge warn">wrong source (audio)</span>
+</div>
+</div>
+<div class="video-block">
+<div class="video-label">Task-adapted LTX-2.5 (same-backbone control)</div>
+<video controls="" playsinline="" preload="metadata" src="media/n2_06_qB_control.mp4">
+</video>
+<div class="badges">
+<span class="badge fail">VR ✗</span>
+<span class="badge fail">AR ✗</span>
+<span class="badge fail">VP ✗</span>
+<span class="badge fail">AP ✗</span>
+<span class="badge pass">C ✓</span>
+<span class="badge fail">J ✗</span>
+<span class="badge warn">wrong source (video)</span>
+<span class="badge warn">wrong source (audio)</span>
+</div>
+</div>
+<div class="video-block added-baseline">
+<div class="video-label">InstructAV2AV</div>
+<video controls="" playsinline="" preload="metadata" src="media/n2_06_qB_instructav2av.mp4"></video>
+<div class="badges"><span class="badge fail">VR ✗</span><span class="badge pass">AR ✓</span><span class="badge fail">VP ✗</span><span class="badge fail">AP ✗</span><span class="badge fail">C ✗</span><span class="badge fail">J ✗</span></div>
+<p class="review-note">Earlier blind-review round.</p>
+</div><div class="video-block added-baseline">
+<div class="video-label">Kiwi-Edit to CoherentAVEdit cascade</div>
+<video controls="" playsinline="" preload="metadata" src="media/n2_06_qB_kiwi_cascade.mp4"></video>
+<div class="badges"><span class="badge neutral">automatic evaluation only</span></div>
+<p class="review-note">H.264 playback copy; exact MP4V original retained.</p>
+</div><div class="video-block added-baseline">
+<div class="video-label">LTX-2.5 no-LoRA</div>
+<video controls="" playsinline="" preload="metadata" src="media/n2_06_qB_ltx_nolora.mp4"></video>
+<div class="badges"><span class="badge neutral">automatic evaluation only</span></div>
+</div></section>
+</div>
+</article>
+<article class="case">
+<div class="case-head">
+<span class="case-number">Example 07</span>
+<code>MUSIC-AVQA__00002755__w47</code>
+</div>
+<div class="case-grid">
+<section class="input-column">
+<h4>Input</h4>
+<div class="video-block">
+<div class="video-label">Original clip</div>
+<video controls="" playsinline="" preload="metadata" src="media/n2_07_input.mp4">
+</video>
+<div class="badges">
+</div>
+</div>
+</section>
+<section class="query">
+<h4>qA: Remove the accordion music from the scene: erase it from the video and remove its sound from the audio, while keeping everything else, including the background and all other sounds, unchanged.</h4>
+<div class="video-block">
+<div class="video-label">AV-IRE</div>
+<video controls="" playsinline="" preload="metadata" src="media/n2_07_qA_avire.mp4">
+</video>
+<div class="badges">
+<span class="badge pass">VR ✓</span>
+<span class="badge pass">AR ✓</span>
+<span class="badge pass">VP ✓</span>
+<span class="badge pass">AP ✓</span>
+<span class="badge pass">C ✓</span>
+<span class="badge pass">J ✓</span>
+</div>
+</div>
+<div class="video-block">
+<div class="video-label">Task-adapted LTX-2.5 (same-backbone control)</div>
+<video controls="" playsinline="" preload="metadata" src="media/n2_07_qA_control.mp4">
+</video>
+<div class="badges">
+<span class="badge fail">VR ✗</span>
+<span class="badge pass">AR ✓</span>
+<span class="badge fail">VP ✗</span>
+<span class="badge fail">AP ✗</span>
+<span class="badge fail">C ✗</span>
+<span class="badge fail">J ✗</span>
+<span class="badge warn">wrong source (video)</span>
+<span class="badge warn">wrong source (audio)</span>
+</div>
+</div>
+<div class="video-block added-baseline">
+<div class="video-label">InstructAV2AV</div>
+<video controls="" playsinline="" preload="metadata" src="media/n2_07_qA_instructav2av.mp4"></video>
+<div class="badges"><span class="badge fail">VR ✗</span><span class="badge pass">AR ✓</span><span class="badge pass">VP ✓</span><span class="badge pass">AP ✓</span><span class="badge fail">C ✗</span><span class="badge fail">J ✗</span></div>
+<p class="review-note">Earlier blind-review round.</p>
+</div><div class="video-block added-baseline">
+<div class="video-label">Kiwi-Edit to CoherentAVEdit cascade</div>
+<video controls="" playsinline="" preload="metadata" src="media/n2_07_qA_kiwi_cascade.mp4"></video>
+<div class="badges"><span class="badge neutral">automatic evaluation only</span></div>
+<p class="review-note">H.264 playback copy; exact MP4V original retained.</p>
+</div><div class="video-block added-baseline">
+<div class="video-label">LTX-2.5 no-LoRA</div>
+<video controls="" playsinline="" preload="metadata" src="media/n2_07_qA_ltx_nolora.mp4"></video>
+<div class="badges"><span class="badge neutral">automatic evaluation only</span></div>
+</div></section>
+<section class="query">
+<h4>qB: Remove the banjo music from the scene: erase it from the video and remove its sound from the audio, while keeping everything else, including the background and all other sounds, unchanged.</h4>
+<div class="video-block">
+<div class="video-label">AV-IRE</div>
+<video controls="" playsinline="" preload="metadata" src="media/n2_07_qB_avire.mp4">
+</video>
+<div class="badges">
+<span class="badge pass">VR ✓</span>
+<span class="badge fail">AR ✗</span>
+<span class="badge pass">VP ✓</span>
+<span class="badge pass">AP ✓</span>
+<span class="badge pass">C ✓</span>
+<span class="badge fail">J ✗</span>
+</div>
+</div>
+<div class="video-block">
+<div class="video-label">Task-adapted LTX-2.5 (same-backbone control)</div>
+<video controls="" playsinline="" preload="metadata" src="media/n2_07_qB_control.mp4">
+</video>
+<div class="badges">
+<span class="badge pass">VR ✓</span>
+<span class="badge pass">AR ✓</span>
+<span class="badge fail">VP ✗</span>
+<span class="badge fail">AP ✗</span>
+<span class="badge fail">C ✗</span>
+<span class="badge fail">J ✗</span>
+</div>
+</div>
+<div class="video-block added-baseline">
+<div class="video-label">InstructAV2AV</div>
+<video controls="" playsinline="" preload="metadata" src="media/n2_07_qB_instructav2av.mp4"></video>
+<div class="badges"><span class="badge fail">VR ✗</span><span class="badge fail">AR ✗</span><span class="badge pass">VP ✓</span><span class="badge fail">AP ✗</span><span class="badge pass">C ✓</span><span class="badge fail">J ✗</span></div>
+<p class="review-note">Earlier blind-review round.</p>
+</div><div class="video-block added-baseline">
+<div class="video-label">Kiwi-Edit to CoherentAVEdit cascade</div>
+<video controls="" playsinline="" preload="metadata" src="media/n2_07_qB_kiwi_cascade.mp4"></video>
+<div class="badges"><span class="badge neutral">automatic evaluation only</span></div>
+<p class="review-note">H.264 playback copy; exact MP4V original retained.</p>
+</div><div class="video-block added-baseline">
+<div class="video-label">LTX-2.5 no-LoRA</div>
+<video controls="" playsinline="" preload="metadata" src="media/n2_07_qB_ltx_nolora.mp4"></video>
+<div class="badges"><span class="badge neutral">automatic evaluation only</span></div>
+</div></section>
+</div>
+</article>
+<article class="case">
+<div class="case-head">
+<span class="case-number">Example 08</span>
+<code>MUSIC-AVQA__00008236__w47</code>
+</div>
+<div class="case-grid">
+<section class="input-column">
+<h4>Input</h4>
+<div class="video-block">
+<div class="video-label">Original clip</div>
+<video controls="" playsinline="" preload="metadata" src="media/n2_08_input.mp4">
+</video>
+<div class="badges">
+</div>
+</div>
+</section>
+<section class="query">
+<h4>qA: Remove the erhu music from the scene: erase it from the video and remove its sound from the audio, while keeping everything else, including the background and all other sounds, unchanged.</h4>
+<div class="video-block">
+<div class="video-label">AV-IRE</div>
+<video controls="" playsinline="" preload="metadata" src="media/n2_08_qA_avire.mp4">
+</video>
+<div class="badges">
+<span class="badge fail">VR ✗</span>
+<span class="badge fail">AR ✗</span>
+<span class="badge pass">VP ✓</span>
+<span class="badge fail">AP ✗</span>
+<span class="badge fail">C ✗</span>
+<span class="badge fail">J ✗</span>
+<span class="badge warn">wrong source (audio)</span>
+</div>
+</div>
+<div class="video-block">
+<div class="video-label">Task-adapted LTX-2.5 (same-backbone control)</div>
+<video controls="" playsinline="" preload="metadata" src="media/n2_08_qA_control.mp4">
+</video>
+<div class="badges">
+<span class="badge fail">VR ✗</span>
+<span class="badge pass">AR ✓</span>
+<span class="badge pass">VP ✓</span>
+<span class="badge fail">AP ✗</span>
+<span class="badge fail">C ✗</span>
+<span class="badge fail">J ✗</span>
+</div>
+</div>
+<div class="video-block added-baseline">
+<div class="video-label">InstructAV2AV</div>
+<video controls="" playsinline="" preload="metadata" src="media/n2_08_qA_instructav2av.mp4"></video>
+<div class="badges"><span class="badge fail">VR ✗</span><span class="badge fail">AR ✗</span><span class="badge pass">VP ✓</span><span class="badge fail">AP ✗</span><span class="badge fail">C ✗</span><span class="badge fail">J ✗</span><span class="badge fail">wrong source: audio</span></div>
+<p class="review-note">Earlier blind-review round.</p>
+</div><div class="video-block added-baseline">
+<div class="video-label">Kiwi-Edit to CoherentAVEdit cascade</div>
+<video controls="" playsinline="" preload="metadata" src="media/n2_08_qA_kiwi_cascade.mp4"></video>
+<div class="badges"><span class="badge neutral">automatic evaluation only</span></div>
+<p class="review-note">H.264 playback copy; exact MP4V original retained.</p>
+</div><div class="video-block added-baseline">
+<div class="video-label">LTX-2.5 no-LoRA</div>
+<video controls="" playsinline="" preload="metadata" src="media/n2_08_qA_ltx_nolora.mp4"></video>
+<div class="badges"><span class="badge neutral">automatic evaluation only</span></div>
+</div></section>
+<section class="query">
+<h4>qB: Remove the pipa music from the scene: erase it from the video and remove its sound from the audio, while keeping everything else, including the background and all other sounds, unchanged.</h4>
+<div class="video-block">
+<div class="video-label">AV-IRE</div>
+<video controls="" playsinline="" preload="metadata" src="media/n2_08_qB_avire.mp4">
+</video>
+<div class="badges">
+<span class="badge fail">VR ✗</span>
+<span class="badge pass">AR ✓</span>
+<span class="badge pass">VP ✓</span>
+<span class="badge fail">AP ✗</span>
+<span class="badge fail">C ✗</span>
+<span class="badge fail">J ✗</span>
+</div>
+</div>
+<div class="video-block">
+<div class="video-label">Task-adapted LTX-2.5 (same-backbone control)</div>
+<video controls="" playsinline="" preload="metadata" src="media/n2_08_qB_control.mp4">
+</video>
+<div class="badges">
+<span class="badge fail">VR ✗</span>
+<span class="badge pass">AR ✓</span>
+<span class="badge pass">VP ✓</span>
+<span class="badge fail">AP ✗</span>
+<span class="badge fail">C ✗</span>
+<span class="badge fail">J ✗</span>
+<span class="badge warn">wrong source (audio)</span>
+</div>
+</div>
+<div class="video-block added-baseline">
+<div class="video-label">InstructAV2AV</div>
+<video controls="" playsinline="" preload="metadata" src="media/n2_08_qB_instructav2av.mp4"></video>
+<div class="badges"><span class="badge fail">VR ✗</span><span class="badge pass">AR ✓</span><span class="badge fail">VP ✗</span><span class="badge fail">AP ✗</span><span class="badge fail">C ✗</span><span class="badge fail">J ✗</span><span class="badge fail">wrong source: video</span></div>
+<p class="review-note">Earlier blind-review round.</p>
+</div><div class="video-block added-baseline">
+<div class="video-label">Kiwi-Edit to CoherentAVEdit cascade</div>
+<video controls="" playsinline="" preload="metadata" src="media/n2_08_qB_kiwi_cascade.mp4"></video>
+<div class="badges"><span class="badge neutral">automatic evaluation only</span></div>
+<p class="review-note">H.264 playback copy; exact MP4V original retained.</p>
+</div><div class="video-block added-baseline">
+<div class="video-label">LTX-2.5 no-LoRA</div>
+<video controls="" playsinline="" preload="metadata" src="media/n2_08_qB_ltx_nolora.mp4"></video>
+<div class="badges"><span class="badge neutral">automatic evaluation only</span></div>
+</div></section>
+</div>
+</article>
+<article class="case">
+<div class="case-head">
+<span class="case-number">Example 09</span>
+<code>MUSIC-AVQA__00005484__w32</code>
+</div>
+<div class="case-grid">
+<section class="input-column">
+<h4>Input</h4>
+<div class="video-block">
+<div class="video-label">Original clip</div>
+<video controls="" playsinline="" preload="metadata" src="media/n2_09_input.mp4">
+</video>
+<div class="badges">
+</div>
+</div>
+</section>
+<section class="query">
+<h4>qA: Remove the piano music from the scene: erase it from the video and remove its sound from the audio, while keeping everything else, including the background and all other sounds, unchanged.</h4>
+<div class="video-block">
+<div class="video-label">AV-IRE</div>
+<video controls="" playsinline="" preload="metadata" src="media/n2_09_qA_avire.mp4">
+</video>
+<div class="badges">
+<span class="badge pass">VR ✓</span>
+<span class="badge fail">AR ✗</span>
+<span class="badge pass">VP ✓</span>
+<span class="badge fail">AP ✗</span>
+<span class="badge fail">C ✗</span>
+<span class="badge fail">J ✗</span>
+</div>
+</div>
+<div class="video-block">
+<div class="video-label">Task-adapted LTX-2.5 (same-backbone control)</div>
+<video controls="" playsinline="" preload="metadata" src="media/n2_09_qA_control.mp4">
+</video>
+<div class="badges">
+<span class="badge pass">VR ✓</span>
+<span class="badge fail">AR ✗</span>
+<span class="badge pass">VP ✓</span>
+<span class="badge pass">AP ✓</span>
+<span class="badge pass">C ✓</span>
+<span class="badge fail">J ✗</span>
+</div>
+</div>
+<div class="video-block added-baseline">
+<div class="video-label">InstructAV2AV</div>
+<video controls="" playsinline="" preload="metadata" src="media/n2_09_qA_instructav2av.mp4"></video>
+<div class="badges"><span class="badge fail">VR ✗</span><span class="badge fail">AR ✗</span><span class="badge pass">VP ✓</span><span class="badge pass">AP ✓</span><span class="badge fail">C ✗</span><span class="badge fail">J ✗</span></div>
+<p class="review-note">Earlier blind-review round.</p>
+</div><div class="video-block added-baseline">
+<div class="video-label">Kiwi-Edit to CoherentAVEdit cascade</div>
+<video controls="" playsinline="" preload="metadata" src="media/n2_09_qA_kiwi_cascade.mp4"></video>
+<div class="badges"><span class="badge neutral">automatic evaluation only</span></div>
+<p class="review-note">H.264 playback copy; exact MP4V original retained.</p>
+</div><div class="video-block added-baseline">
+<div class="video-label">LTX-2.5 no-LoRA</div>
+<video controls="" playsinline="" preload="metadata" src="media/n2_09_qA_ltx_nolora.mp4"></video>
+<div class="badges"><span class="badge neutral">automatic evaluation only</span></div>
+</div></section>
+<section class="query">
+<h4>qB: Remove the ukulele music from the scene: erase it from the video and remove its sound from the audio, while keeping everything else, including the background and all other sounds, unchanged.</h4>
+<div class="video-block">
+<div class="video-label">AV-IRE</div>
+<video controls="" playsinline="" preload="metadata" src="media/n2_09_qB_avire.mp4">
+</video>
+<div class="badges">
+<span class="badge pass">VR ✓</span>
+<span class="badge pass">AR ✓</span>
+<span class="badge pass">VP ✓</span>
+<span class="badge pass">AP ✓</span>
+<span class="badge pass">C ✓</span>
+<span class="badge pass">J ✓</span>
+</div>
+</div>
+<div class="video-block">
+<div class="video-label">Task-adapted LTX-2.5 (same-backbone control)</div>
+<video controls="" playsinline="" preload="metadata" src="media/n2_09_qB_control.mp4">
+</video>
+<div class="badges">
+<span class="badge fail">VR ✗</span>
+<span class="badge pass">AR ✓</span>
+<span class="badge fail">VP ✗</span>
+<span class="badge fail">AP ✗</span>
+<span class="badge fail">C ✗</span>
+<span class="badge fail">J ✗</span>
+<span class="badge warn">wrong source (audio)</span>
+</div>
+</div>
+<div class="video-block added-baseline">
+<div class="video-label">InstructAV2AV</div>
+<video controls="" playsinline="" preload="metadata" src="media/n2_09_qB_instructav2av.mp4"></video>
+<div class="badges"><span class="badge pass">VR ✓</span><span class="badge pass">AR ✓</span><span class="badge fail">VP ✗</span><span class="badge fail">AP ✗</span><span class="badge fail">C ✗</span><span class="badge fail">J ✗</span><span class="badge fail">wrong source: video</span></div>
+<p class="review-note">Earlier blind-review round.</p>
+</div><div class="video-block added-baseline">
+<div class="video-label">Kiwi-Edit to CoherentAVEdit cascade</div>
+<video controls="" playsinline="" preload="metadata" src="media/n2_09_qB_kiwi_cascade.mp4"></video>
+<div class="badges"><span class="badge neutral">automatic evaluation only</span></div>
+<p class="review-note">H.264 playback copy; exact MP4V original retained.</p>
+</div><div class="video-block added-baseline">
+<div class="video-label">LTX-2.5 no-LoRA</div>
+<video controls="" playsinline="" preload="metadata" src="media/n2_09_qB_ltx_nolora.mp4"></video>
+<div class="badges"><span class="badge neutral">automatic evaluation only</span></div>
+</div></section>
+</div>
+</article>
+<article class="case">
+<div class="case-head">
+<span class="case-number">Example 10</span>
+<code>MUSIC-AVQA__00001589__w02</code>
+</div>
+<div class="case-grid">
+<section class="input-column">
+<h4>Input</h4>
+<div class="video-block">
+<div class="video-label">Original clip</div>
+<video controls="" playsinline="" preload="metadata" src="media/n2_10_input.mp4">
+</video>
+<div class="badges">
+</div>
+</div>
+</section>
+<section class="query">
+<h4>qA: Remove the acoustic guitar music from the scene: erase it from the video and remove its sound from the audio, while keeping everything else, including the background and all other sounds, unchanged.</h4>
+<div class="video-block">
+<div class="video-label">AV-IRE</div>
+<video controls="" playsinline="" preload="metadata" src="media/n2_10_qA_avire.mp4">
+</video>
+<div class="badges">
+<span class="badge pass">VR ✓</span>
+<span class="badge fail">AR ✗</span>
+<span class="badge pass">VP ✓</span>
+<span class="badge fail">AP ✗</span>
+<span class="badge fail">C ✗</span>
+<span class="badge fail">J ✗</span>
+<span class="badge warn">wrong source (audio)</span>
+</div>
+</div>
+<div class="video-block">
+<div class="video-label">Task-adapted LTX-2.5 (same-backbone control)</div>
+<video controls="" playsinline="" preload="metadata" src="media/n2_10_qA_control.mp4">
+</video>
+<div class="badges">
+<span class="badge pass">VR ✓</span>
+<span class="badge fail">AR ✗</span>
+<span class="badge fail">VP ✗</span>
+<span class="badge fail">AP ✗</span>
+<span class="badge fail">C ✗</span>
+<span class="badge fail">J ✗</span>
+<span class="badge warn">wrong source (audio)</span>
+</div>
+</div>
+<div class="video-block added-baseline">
+<div class="video-label">InstructAV2AV</div>
+<video controls="" playsinline="" preload="metadata" src="media/n2_10_qA_instructav2av.mp4"></video>
+<div class="badges"><span class="badge fail">VR ✗</span><span class="badge fail">AR ✗</span><span class="badge fail">VP ✗</span><span class="badge pass">AP ✓</span><span class="badge fail">C ✗</span><span class="badge fail">J ✗</span><span class="badge fail">wrong source: video</span></div>
+<p class="review-note">Earlier blind-review round.</p>
+</div><div class="video-block added-baseline">
+<div class="video-label">Kiwi-Edit to CoherentAVEdit cascade</div>
+<video controls="" playsinline="" preload="metadata" src="media/n2_10_qA_kiwi_cascade.mp4"></video>
+<div class="badges"><span class="badge neutral">automatic evaluation only</span></div>
+<p class="review-note">H.264 playback copy; exact MP4V original retained.</p>
+</div><div class="video-block added-baseline">
+<div class="video-label">LTX-2.5 no-LoRA</div>
+<video controls="" playsinline="" preload="metadata" src="media/n2_10_qA_ltx_nolora.mp4"></video>
+<div class="badges"><span class="badge neutral">automatic evaluation only</span></div>
+</div></section>
+<section class="query">
+<h4>qB: Remove the erhu music from the scene: erase it from the video and remove its sound from the audio, while keeping everything else, including the background and all other sounds, unchanged.</h4>
+<div class="video-block">
+<div class="video-label">AV-IRE</div>
+<video controls="" playsinline="" preload="metadata" src="media/n2_10_qB_avire.mp4">
+</video>
+<div class="badges">
+<span class="badge pass">VR ✓</span>
+<span class="badge pass">AR ✓</span>
+<span class="badge pass">VP ✓</span>
+<span class="badge pass">AP ✓</span>
+<span class="badge pass">C ✓</span>
+<span class="badge pass">J ✓</span>
+</div>
+</div>
+<div class="video-block">
+<div class="video-label">Task-adapted LTX-2.5 (same-backbone control)</div>
+<video controls="" playsinline="" preload="metadata" src="media/n2_10_qB_control.mp4">
+</video>
+<div class="badges">
+<span class="badge pass">VR ✓</span>
+<span class="badge pass">AR ✓</span>
+<span class="badge fail">VP ✗</span>
+<span class="badge fail">AP ✗</span>
+<span class="badge fail">C ✗</span>
+<span class="badge fail">J ✗</span>
+</div>
+</div>
+<div class="video-block added-baseline">
+<div class="video-label">InstructAV2AV</div>
+<video controls="" playsinline="" preload="metadata" src="media/n2_10_qB_instructav2av.mp4"></video>
+<div class="badges"><span class="badge fail">VR ✗</span><span class="badge fail">AR ✗</span><span class="badge pass">VP ✓</span><span class="badge pass">AP ✓</span><span class="badge fail">C ✗</span><span class="badge fail">J ✗</span></div>
+<p class="review-note">Earlier blind-review round.</p>
+</div><div class="video-block added-baseline">
+<div class="video-label">Kiwi-Edit to CoherentAVEdit cascade</div>
+<video controls="" playsinline="" preload="metadata" src="media/n2_10_qB_kiwi_cascade.mp4"></video>
+<div class="badges"><span class="badge neutral">automatic evaluation only</span></div>
+<p class="review-note">H.264 playback copy; exact MP4V original retained.</p>
+</div><div class="video-block added-baseline">
+<div class="video-label">LTX-2.5 no-LoRA</div>
+<video controls="" playsinline="" preload="metadata" src="media/n2_10_qB_ltx_nolora.mp4"></video>
+<div class="badges"><span class="badge neutral">automatic evaluation only</span></div>
+</div></section>
+</div>
+</article>
+<article class="case">
+<div class="case-head">
+<span class="case-number">Example 11</span>
+<code>MUSIC-AVQA__00004874__w17</code>
+</div>
+<div class="case-grid">
+<section class="input-column">
+<h4>Input</h4>
+<div class="video-block">
+<div class="video-label">Original clip</div>
+<video controls="" playsinline="" preload="metadata" src="media/n2_11_input.mp4">
+</video>
+<div class="badges">
+</div>
+</div>
+</section>
+<section class="query">
+<h4>qA: Remove the electric bass music from the scene: erase it from the video and remove its sound from the audio, while keeping everything else, including the background and all other sounds, unchanged.</h4>
+<div class="video-block">
+<div class="video-label">AV-IRE</div>
+<video controls="" playsinline="" preload="metadata" src="media/n2_11_qA_avire.mp4">
+</video>
+<div class="badges">
+<span class="badge fail">VR ✗</span>
+<span class="badge pass">AR ✓</span>
+<span class="badge pass">VP ✓</span>
+<span class="badge pass">AP ✓</span>
+<span class="badge pass">C ✓</span>
+<span class="badge fail">J ✗</span>
+</div>
+</div>
+<div class="video-block">
+<div class="video-label">Task-adapted LTX-2.5 (same-backbone control)</div>
+<video controls="" playsinline="" preload="metadata" src="media/n2_11_qA_control.mp4">
+</video>
+<div class="badges">
+<span class="badge pass">VR ✓</span>
+<span class="badge pass">AR ✓</span>
+<span class="badge pass">VP ✓</span>
+<span class="badge pass">AP ✓</span>
+<span class="badge pass">C ✓</span>
+<span class="badge pass">J ✓</span>
+</div>
+<p class="posthoc-note"><span class="badge fail">Post-hoc: wrong source removed</span> <strong>Reviewer-confirmed correction, not used in aggregate scores:</strong> the opposite source was removed in both video and audio. Corrected assessment: VR, AR, VP, AP and J fail; wrong source in video and audio.</p>
+</div>
+<div class="video-block added-baseline">
+<div class="video-label">InstructAV2AV</div>
+<video controls="" playsinline="" preload="metadata" src="media/n2_11_qA_instructav2av.mp4"></video>
+<div class="badges"><span class="badge fail">VR ✗</span><span class="badge pass">AR ✓</span><span class="badge fail">VP ✗</span><span class="badge fail">AP ✗</span><span class="badge fail">C ✗</span><span class="badge fail">J ✗</span></div>
+<p class="review-note">Earlier blind-review round.</p>
+</div><div class="video-block added-baseline">
+<div class="video-label">Kiwi-Edit to CoherentAVEdit cascade</div>
+<video controls="" playsinline="" preload="metadata" src="media/n2_11_qA_kiwi_cascade.mp4"></video>
+<div class="badges"><span class="badge neutral">automatic evaluation only</span></div>
+<p class="review-note">H.264 playback copy; exact MP4V original retained.</p>
+</div><div class="video-block added-baseline">
+<div class="video-label">LTX-2.5 no-LoRA</div>
+<video controls="" playsinline="" preload="metadata" src="media/n2_11_qA_ltx_nolora.mp4"></video>
+<div class="badges"><span class="badge neutral">automatic evaluation only</span></div>
+</div></section>
+<section class="query">
+<h4>qB: Remove the xylophone music from the scene: erase it from the video and remove its sound from the audio, while keeping everything else, including the background and all other sounds, unchanged.</h4>
+<div class="video-block">
+<div class="video-label">AV-IRE</div>
+<video controls="" playsinline="" preload="metadata" src="media/n2_11_qB_avire.mp4">
+</video>
+<div class="badges">
+<span class="badge pass">VR ✓</span>
+<span class="badge fail">AR ✗</span>
+<span class="badge pass">VP ✓</span>
+<span class="badge pass">AP ✓</span>
+<span class="badge pass">C ✓</span>
+<span class="badge fail">J ✗</span>
+</div>
+</div>
+<div class="video-block">
+<div class="video-label">Task-adapted LTX-2.5 (same-backbone control)</div>
+<video controls="" playsinline="" preload="metadata" src="media/n2_11_qB_control.mp4">
+</video>
+<div class="badges">
+<span class="badge pass">VR ✓</span>
+<span class="badge fail">AR ✗</span>
+<span class="badge pass">VP ✓</span>
+<span class="badge fail">AP ✗</span>
+<span class="badge fail">C ✗</span>
+<span class="badge fail">J ✗</span>
+<span class="badge warn">wrong source (audio)</span>
+</div>
+</div>
+<div class="video-block added-baseline">
+<div class="video-label">InstructAV2AV</div>
+<video controls="" playsinline="" preload="metadata" src="media/n2_11_qB_instructav2av.mp4"></video>
+<div class="badges"><span class="badge fail">VR ✗</span><span class="badge pass">AR ✓</span><span class="badge fail">VP ✗</span><span class="badge fail">AP ✗</span><span class="badge fail">C ✗</span><span class="badge fail">J ✗</span></div>
+<p class="review-note">Earlier blind-review round.</p>
+</div><div class="video-block added-baseline">
+<div class="video-label">Kiwi-Edit to CoherentAVEdit cascade</div>
+<video controls="" playsinline="" preload="metadata" src="media/n2_11_qB_kiwi_cascade.mp4"></video>
+<div class="badges"><span class="badge neutral">automatic evaluation only</span></div>
+<p class="review-note">H.264 playback copy; exact MP4V original retained.</p>
+</div><div class="video-block added-baseline">
+<div class="video-label">LTX-2.5 no-LoRA</div>
+<video controls="" playsinline="" preload="metadata" src="media/n2_11_qB_ltx_nolora.mp4"></video>
+<div class="badges"><span class="badge neutral">automatic evaluation only</span></div>
+</div></section>
+</div>
+</article>
+</section>
+<footer>
+<p>
+<strong>Media attribution and license.</strong> Source: MUSIC-AVQA. Short source clips and edited derivatives are provided under CC BY-NC 4.0 for non-commercial research use. Edited outputs constitute changes to the source clips. This presentation does not imply endorsement by the dataset creators.</p>
+</footer>
+</main>
+<script>
+document.addEventListener('play', function(event) {
+  if (event.target.tagName !== 'VIDEO') return;
+  document.querySelectorAll('video').forEach(function(video) {
+    if (video !== event.target) video.pause();
+  });
+}, true);
+</script>
+</body>
+</html>
