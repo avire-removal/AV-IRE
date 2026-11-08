@@ -72,7 +72,7 @@ footer { color:var(--muted); border-top:1px solid var(--line); margin-top:44px; 
 <span>
 <b>J</b> all five criteria pass</span>
 </div>
-<p>A check means that the displayed system output passed the criterion; a cross means that it did not. <b>J</b> passes only when all five criteria pass for that output. A wrong-source flag means that the edit removed a non-target source. Badges are blind human ratings. Systems shown without badges were not human-rated on these inputs; a note under such a system describes the file, not the quality of the edit.</p>
+<p>A check means that the displayed system output passed the criterion; a cross means that it did not. <b>J</b> passes only when all five criteria pass for that output. A wrong-source flag means that the edit removed a non-target source. Badges are blind human ratings. Systems shown without badges were not human-rated on these inputs; a note under such a system describes the file, not the quality of the edit. Two control outputs, in Examples 01 and 11, show ratings corrected after unblinding; their notes give the original rating.</p>
 </div>
 <details class="details"><summary>Evaluation, media, and anonymity details</summary><div class="details-body">
 <p><strong>Systems and rating scope.</strong> <b>Task-adapted LTX-2.5</b> is the same-backbone control: it uses the LTX-2.5 backbone, a 6,000-step task LoRA, and a target-specific text prompt, but does not use the AV-IRE selector or routing executor. AV-IRE and this control were judged in the final blind-review round. InstructAV2AV badges report an earlier blind-review round on the same Natural-2 queries. Kiwi-Edit to CoherentAVEdit and LTX-2.5 no-LoRA are labeled “not human-rated on this page” because this displayed subset has no human ratings for those systems; their automatic scores are reported in the paper.</p>
@@ -120,14 +120,14 @@ footer { color:var(--muted); border-top:1px solid var(--line); margin-top:44px; 
 <video controls="" playsinline="" preload="metadata" src="media/n2_01_qA_control.mp4">
 </video>
 <div class="badges">
-<span class="badge pass">VR ✓</span>
-<span class="badge pass">AR ✓</span>
-<span class="badge pass">VP ✓</span>
-<span class="badge pass">AP ✓</span>
-<span class="badge pass">C ✓</span>
-<span class="badge pass">J ✓</span>
-</div>
-<p class="posthoc-note"><span class="badge fail">Post-hoc: wrong source removed</span> <strong>Re-check after unblinding, not used in aggregate scores:</strong> raters judged that this output removes the violinist and keeps the banjo player; the frozen all-pass rating shown above is the one counted in the paper.</p>
+<span class="badge fail" title="corrected after unblinding; original rating: pass">VR ✗</span>
+<span class="badge fail" title="corrected after unblinding; original rating: pass">AR ✗</span>
+<span class="badge fail" title="corrected after unblinding; original rating: pass">VP ✗</span>
+<span class="badge fail" title="corrected after unblinding; original rating: pass">AP ✗</span>
+<span class="badge fail" title="corrected after unblinding; original rating: pass">C ✗</span>
+<span class="badge fail" title="corrected after unblinding; original rating: pass">J ✗</span>
+<span class="badge warn" title="original blind rating: all pass">corrected</span></div>
+<p class="posthoc-note"><span class="badge fail">Post-hoc: wrong source removed</span> <strong>Corrected after unblinding:</strong> an unblinded re-check found that this output removes the violinist and keeps the banjo player. The badges show the corrected rating; the original blind rating, all pass, is the one counted in the paper's aggregate scores.</p>
 </div>
 <div class="video-block added-baseline">
 <div class="video-label">InstructAV2AV</div>
@@ -1177,14 +1177,14 @@ footer { color:var(--muted); border-top:1px solid var(--line); margin-top:44px; 
 <video controls="" playsinline="" preload="metadata" src="media/n2_11_qA_control.mp4">
 </video>
 <div class="badges">
-<span class="badge pass">VR ✓</span>
-<span class="badge pass">AR ✓</span>
-<span class="badge pass">VP ✓</span>
-<span class="badge pass">AP ✓</span>
+<span class="badge fail" title="corrected after unblinding; original rating: pass">VR ✗</span>
+<span class="badge fail" title="corrected after unblinding; original rating: pass">AR ✗</span>
+<span class="badge fail" title="corrected after unblinding; original rating: pass">VP ✗</span>
+<span class="badge fail" title="corrected after unblinding; original rating: pass">AP ✗</span>
 <span class="badge pass">C ✓</span>
-<span class="badge pass">J ✓</span>
-</div>
-<p class="posthoc-note"><span class="badge fail">Post-hoc: wrong source removed</span> <strong>Reviewer-confirmed correction, not used in aggregate scores:</strong> the opposite source was removed in both video and audio. Corrected assessment: VR, AR, VP, AP and J fail; wrong source in video and audio.</p>
+<span class="badge fail" title="corrected after unblinding; original rating: pass">J ✗</span>
+<span class="badge warn" title="original blind rating: all pass">corrected</span></div>
+<p class="posthoc-note"><span class="badge fail">Post-hoc: wrong source removed</span> <strong>Rater-confirmed correction:</strong> the opposite source was removed in both video and audio. The badges show the corrected rating; the original blind rating, all pass, is the one counted in the paper's aggregate scores, and the paper's appendix reports this correction as a sensitivity analysis.</p>
 </div>
 <div class="video-block added-baseline">
 <div class="video-label">InstructAV2AV</div>
