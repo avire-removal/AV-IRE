@@ -72,10 +72,10 @@ footer { color:var(--muted); border-top:1px solid var(--line); margin-top:44px; 
 <span>
 <b>J</b> all five criteria pass</span>
 </div>
-<p>A check means that the displayed system output passed the criterion; a cross means that it did not. <b>J</b> passes only when all five criteria pass for that output. A wrong-source flag means that the edit removed a non-target source. Badges are blind human ratings, except for two control outputs in Examples 01 and 11, whose badges show ratings corrected after unblinding; their original blind ratings, all pass, are the ones used in the paper's aggregate scores. Systems shown without badges were not human-rated on these inputs; a note under such a system describes the file, not the quality of the edit.</p>
+<p>A check means that the displayed system output passed the criterion; a cross means that it did not. <b>J</b> passes only when all five criteria pass for that output. A wrong-source flag means that the edit removed a non-target source. Badges are blind human ratings, except for two control outputs in Examples 01 and 11, whose badges show ratings corrected after unblinding; their original blind ratings, all pass, are the ones used in the paper's aggregate scores. The Kiwi-Edit to CoherentAVEdit cascade and LTX-2.5 no-LoRA were rated blind at the rebuttal stage, on these inputs only; a format note under a system describes the file, not the quality of the edit.</p>
 </div>
 <details class="details"><summary>Evaluation, media, and anonymity details</summary><div class="details-body">
-<p><strong>Systems and rating scope.</strong> <b>Task-adapted LTX-2.5</b> is the same-backbone control: it uses the LTX-2.5 backbone, a 6,000-step task LoRA, and a target-specific text prompt, but does not use the AV-IRE selector or routing executor. AV-IRE and this control were judged in the final blind-review round. InstructAV2AV badges report an earlier blind-review round on the same Natural-2 queries. Kiwi-Edit to CoherentAVEdit and LTX-2.5 no-LoRA are labeled “not human-rated on this page” because this displayed subset has no human ratings for those systems; their automatic scores are reported in the paper.</p>
+<p><strong>Systems and rating scope.</strong> <b>Task-adapted LTX-2.5</b> is the same-backbone control: it uses the LTX-2.5 backbone, a 6,000-step task LoRA, and a target-specific text prompt, but does not use the AV-IRE selector or routing executor. AV-IRE and this control were judged in the final blind-review round. InstructAV2AV badges report an earlier blind-review round on the same Natural-2 queries. Kiwi-Edit to CoherentAVEdit and LTX-2.5 no-LoRA were judged in a separate blind-review round at the rebuttal stage, on the displayed inputs only; the paper reports their automatic scores.</p>
 <p><strong>Example selection.</strong> Section 1 contains all five inputs for which AV-IRE passed both target requests in the final blind review. Section 2 contains six inputs selected with a fixed random seed and kept regardless of outcome. These examples provide qualitative comparisons; aggregate results and statistical analyses are reported in the paper, and the complete item-level judgments are included in the supplementary material.</p>
 <p><strong>Media provenance.</strong> AV-IRE and task-adapted LTX-2.5 reuse the exact outputs shown in the final blind review. InstructAV2AV reuses the exact outputs from an earlier blind-review round on the same queries. LTX-2.5 no-LoRA reuses its evaluation outputs. Kiwi-Edit to CoherentAVEdit outputs (MP4V, 121 frames at 29.75 fps) were re-encoded to H.264 at 30 fps (122 frames) only for browser playback; the audio track was copied unchanged and no output was regenerated. The original MP4V files are byte-identical to the files scored in the paper. Every input is shown as 121 frames at 30 fps, matching the output window.</p>
 <p><strong>Anonymity.</strong> This page contains no author names, affiliations, external links, or analytics code. All media and styles are served with the page.</p>
@@ -127,7 +127,6 @@ footer { color:var(--muted); border-top:1px solid var(--line); margin-top:44px; 
 <span class="badge fail">C ✗</span>
 <span class="badge fail">J ✗</span>
 </div>
-
 </div>
 <div class="video-block added-baseline">
 <div class="video-label">InstructAV2AV</div>
@@ -137,12 +136,12 @@ footer { color:var(--muted); border-top:1px solid var(--line); margin-top:44px; 
 </div><div class="video-block added-baseline">
 <div class="video-label">Kiwi-Edit to CoherentAVEdit cascade</div>
 <video controls="" playsinline="" preload="metadata" src="media/n2_01_qA_kiwi_cascade.mp4"></video>
-<div class="badges"><span class="badge neutral">not human-rated on this page</span></div>
+<div class="badges"><span class="badge fail">VR ✗</span><span class="badge pass">AR ✓</span><span class="badge pass">VP ✓</span><span class="badge fail">AP ✗</span><span class="badge fail">C ✗</span><span class="badge fail">J ✗</span></div><p class="review-note">Rebuttal-stage blind-review round.</p>
 <p class="review-note">Format note, not a score: browsers cannot play this system's MP4V output, so this copy was re-encoded to H.264 for playback; the audio is unchanged.</p>
 </div><div class="video-block added-baseline">
 <div class="video-label">LTX-2.5 no-LoRA</div>
 <video controls="" playsinline="" preload="metadata" src="media/n2_01_qA_ltx_nolora.mp4"></video>
-<div class="badges"><span class="badge neutral">not human-rated on this page</span></div>
+<div class="badges"><span class="badge fail">VR ✗</span><span class="badge fail">AR ✗</span><span class="badge pass">VP ✓</span><span class="badge pass">AP ✓</span><span class="badge pass">C ✓</span><span class="badge fail">J ✗</span></div><p class="review-note">Rebuttal-stage blind-review round.</p>
 </div></section>
 <section class="query">
 <h4>qB: Remove the violin music from the scene: erase it from the video and remove its sound from the audio, while keeping everything else, including the background and all other sounds, unchanged.</h4>
@@ -180,12 +179,12 @@ footer { color:var(--muted); border-top:1px solid var(--line); margin-top:44px; 
 </div><div class="video-block added-baseline">
 <div class="video-label">Kiwi-Edit to CoherentAVEdit cascade</div>
 <video controls="" playsinline="" preload="metadata" src="media/n2_01_qB_kiwi_cascade.mp4"></video>
-<div class="badges"><span class="badge neutral">not human-rated on this page</span></div>
+<div class="badges"><span class="badge pass">VR ✓</span><span class="badge fail">AR ✗</span><span class="badge pass">VP ✓</span><span class="badge fail">AP ✗</span><span class="badge fail">C ✗</span><span class="badge fail">J ✗</span><span class="badge fail">wrong source: audio</span></div><p class="review-note">Rebuttal-stage blind-review round.</p>
 <p class="review-note">Format note, not a score: browsers cannot play this system's MP4V output, so this copy was re-encoded to H.264 for playback; the audio is unchanged.</p>
 </div><div class="video-block added-baseline">
 <div class="video-label">LTX-2.5 no-LoRA</div>
 <video controls="" playsinline="" preload="metadata" src="media/n2_01_qB_ltx_nolora.mp4"></video>
-<div class="badges"><span class="badge neutral">not human-rated on this page</span></div>
+<div class="badges"><span class="badge fail">VR ✗</span><span class="badge fail">AR ✗</span><span class="badge pass">VP ✓</span><span class="badge pass">AP ✓</span><span class="badge pass">C ✓</span><span class="badge fail">J ✗</span></div><p class="review-note">Rebuttal-stage blind-review round.</p>
 </div></section>
 </div>
 </article>
@@ -241,12 +240,12 @@ footer { color:var(--muted); border-top:1px solid var(--line); margin-top:44px; 
 </div><div class="video-block added-baseline">
 <div class="video-label">Kiwi-Edit to CoherentAVEdit cascade</div>
 <video controls="" playsinline="" preload="metadata" src="media/n2_02_qA_kiwi_cascade.mp4"></video>
-<div class="badges"><span class="badge neutral">not human-rated on this page</span></div>
+<div class="badges"><span class="badge fail">VR ✗</span><span class="badge fail">AR ✗</span><span class="badge pass">VP ✓</span><span class="badge fail">AP ✗</span><span class="badge fail">C ✗</span><span class="badge fail">J ✗</span></div><p class="review-note">Rebuttal-stage blind-review round.</p>
 <p class="review-note">Format note, not a score: browsers cannot play this system's MP4V output, so this copy was re-encoded to H.264 for playback; the audio is unchanged.</p>
 </div><div class="video-block added-baseline">
 <div class="video-label">LTX-2.5 no-LoRA</div>
 <video controls="" playsinline="" preload="metadata" src="media/n2_02_qA_ltx_nolora.mp4"></video>
-<div class="badges"><span class="badge neutral">not human-rated on this page</span></div>
+<div class="badges"><span class="badge fail">VR ✗</span><span class="badge fail">AR ✗</span><span class="badge pass">VP ✓</span><span class="badge pass">AP ✓</span><span class="badge pass">C ✓</span><span class="badge fail">J ✗</span></div><p class="review-note">Rebuttal-stage blind-review round.</p>
 </div></section>
 <section class="query">
 <h4>qB: Remove the trumpet music from the scene: erase it from the video and remove its sound from the audio, while keeping everything else, including the background and all other sounds, unchanged.</h4>
@@ -285,12 +284,12 @@ footer { color:var(--muted); border-top:1px solid var(--line); margin-top:44px; 
 </div><div class="video-block added-baseline">
 <div class="video-label">Kiwi-Edit to CoherentAVEdit cascade</div>
 <video controls="" playsinline="" preload="metadata" src="media/n2_02_qB_kiwi_cascade.mp4"></video>
-<div class="badges"><span class="badge neutral">not human-rated on this page</span></div>
+<div class="badges"><span class="badge pass">VR ✓</span><span class="badge fail">AR ✗</span><span class="badge pass">VP ✓</span><span class="badge fail">AP ✗</span><span class="badge fail">C ✗</span><span class="badge fail">J ✗</span></div><p class="review-note">Rebuttal-stage blind-review round.</p>
 <p class="review-note">Format note, not a score: browsers cannot play this system's MP4V output, so this copy was re-encoded to H.264 for playback; the audio is unchanged.</p>
 </div><div class="video-block added-baseline">
 <div class="video-label">LTX-2.5 no-LoRA</div>
 <video controls="" playsinline="" preload="metadata" src="media/n2_02_qB_ltx_nolora.mp4"></video>
-<div class="badges"><span class="badge neutral">not human-rated on this page</span></div>
+<div class="badges"><span class="badge fail">VR ✗</span><span class="badge fail">AR ✗</span><span class="badge pass">VP ✓</span><span class="badge pass">AP ✓</span><span class="badge pass">C ✓</span><span class="badge fail">J ✗</span></div><p class="review-note">Rebuttal-stage blind-review round.</p>
 </div></section>
 </div>
 </article>
@@ -346,12 +345,12 @@ footer { color:var(--muted); border-top:1px solid var(--line); margin-top:44px; 
 </div><div class="video-block added-baseline">
 <div class="video-label">Kiwi-Edit to CoherentAVEdit cascade</div>
 <video controls="" playsinline="" preload="metadata" src="media/n2_03_qA_kiwi_cascade.mp4"></video>
-<div class="badges"><span class="badge neutral">not human-rated on this page</span></div>
+<div class="badges"><span class="badge fail">VR ✗</span><span class="badge fail">AR ✗</span><span class="badge pass">VP ✓</span><span class="badge fail">AP ✗</span><span class="badge fail">C ✗</span><span class="badge fail">J ✗</span><span class="badge fail">wrong source: audio</span></div><p class="review-note">Rebuttal-stage blind-review round.</p>
 <p class="review-note">Format note, not a score: browsers cannot play this system's MP4V output, so this copy was re-encoded to H.264 for playback; the audio is unchanged.</p>
 </div><div class="video-block added-baseline">
 <div class="video-label">LTX-2.5 no-LoRA</div>
 <video controls="" playsinline="" preload="metadata" src="media/n2_03_qA_ltx_nolora.mp4"></video>
-<div class="badges"><span class="badge neutral">not human-rated on this page</span></div>
+<div class="badges"><span class="badge fail">VR ✗</span><span class="badge fail">AR ✗</span><span class="badge pass">VP ✓</span><span class="badge pass">AP ✓</span><span class="badge pass">C ✓</span><span class="badge fail">J ✗</span></div><p class="review-note">Rebuttal-stage blind-review round.</p>
 </div></section>
 <section class="query">
 <h4>qB: Remove the bassoon music from the scene: erase it from the video and remove its sound from the audio, while keeping everything else, including the background and all other sounds, unchanged.</h4>
@@ -389,12 +388,12 @@ footer { color:var(--muted); border-top:1px solid var(--line); margin-top:44px; 
 </div><div class="video-block added-baseline">
 <div class="video-label">Kiwi-Edit to CoherentAVEdit cascade</div>
 <video controls="" playsinline="" preload="metadata" src="media/n2_03_qB_kiwi_cascade.mp4"></video>
-<div class="badges"><span class="badge neutral">not human-rated on this page</span></div>
+<div class="badges"><span class="badge fail">VR ✗</span><span class="badge fail">AR ✗</span><span class="badge pass">VP ✓</span><span class="badge fail">AP ✗</span><span class="badge fail">C ✗</span><span class="badge fail">J ✗</span><span class="badge fail">wrong source: audio</span></div><p class="review-note">Rebuttal-stage blind-review round.</p>
 <p class="review-note">Format note, not a score: browsers cannot play this system's MP4V output, so this copy was re-encoded to H.264 for playback; the audio is unchanged.</p>
 </div><div class="video-block added-baseline">
 <div class="video-label">LTX-2.5 no-LoRA</div>
 <video controls="" playsinline="" preload="metadata" src="media/n2_03_qB_ltx_nolora.mp4"></video>
-<div class="badges"><span class="badge neutral">not human-rated on this page</span></div>
+<div class="badges"><span class="badge fail">VR ✗</span><span class="badge fail">AR ✗</span><span class="badge pass">VP ✓</span><span class="badge pass">AP ✓</span><span class="badge pass">C ✓</span><span class="badge fail">J ✗</span></div><p class="review-note">Rebuttal-stage blind-review round.</p>
 </div></section>
 </div>
 </article>
@@ -451,12 +450,12 @@ footer { color:var(--muted); border-top:1px solid var(--line); margin-top:44px; 
 </div><div class="video-block added-baseline">
 <div class="video-label">Kiwi-Edit to CoherentAVEdit cascade</div>
 <video controls="" playsinline="" preload="metadata" src="media/n2_04_qA_kiwi_cascade.mp4"></video>
-<div class="badges"><span class="badge neutral">not human-rated on this page</span></div>
+<div class="badges"><span class="badge fail">VR ✗</span><span class="badge fail">AR ✗</span><span class="badge pass">VP ✓</span><span class="badge fail">AP ✗</span><span class="badge fail">C ✗</span><span class="badge fail">J ✗</span><span class="badge fail">wrong source: audio</span></div><p class="review-note">Rebuttal-stage blind-review round.</p>
 <p class="review-note">Format note, not a score: browsers cannot play this system's MP4V output, so this copy was re-encoded to H.264 for playback; the audio is unchanged.</p>
 </div><div class="video-block added-baseline">
 <div class="video-label">LTX-2.5 no-LoRA</div>
 <video controls="" playsinline="" preload="metadata" src="media/n2_04_qA_ltx_nolora.mp4"></video>
-<div class="badges"><span class="badge neutral">not human-rated on this page</span></div>
+<div class="badges"><span class="badge fail">VR ✗</span><span class="badge fail">AR ✗</span><span class="badge pass">VP ✓</span><span class="badge pass">AP ✓</span><span class="badge pass">C ✓</span><span class="badge fail">J ✗</span></div><p class="review-note">Rebuttal-stage blind-review round.</p>
 </div></section>
 <section class="query">
 <h4>qB: Remove the clarinet music from the scene: erase it from the video and remove its sound from the audio, while keeping everything else, including the background and all other sounds, unchanged.</h4>
@@ -494,12 +493,12 @@ footer { color:var(--muted); border-top:1px solid var(--line); margin-top:44px; 
 </div><div class="video-block added-baseline">
 <div class="video-label">Kiwi-Edit to CoherentAVEdit cascade</div>
 <video controls="" playsinline="" preload="metadata" src="media/n2_04_qB_kiwi_cascade.mp4"></video>
-<div class="badges"><span class="badge neutral">not human-rated on this page</span></div>
+<div class="badges"><span class="badge fail">VR ✗</span><span class="badge fail">AR ✗</span><span class="badge pass">VP ✓</span><span class="badge fail">AP ✗</span><span class="badge fail">C ✗</span><span class="badge fail">J ✗</span><span class="badge fail">wrong source: audio</span></div><p class="review-note">Rebuttal-stage blind-review round.</p>
 <p class="review-note">Format note, not a score: browsers cannot play this system's MP4V output, so this copy was re-encoded to H.264 for playback; the audio is unchanged.</p>
 </div><div class="video-block added-baseline">
 <div class="video-label">LTX-2.5 no-LoRA</div>
 <video controls="" playsinline="" preload="metadata" src="media/n2_04_qB_ltx_nolora.mp4"></video>
-<div class="badges"><span class="badge neutral">not human-rated on this page</span></div>
+<div class="badges"><span class="badge fail">VR ✗</span><span class="badge fail">AR ✗</span><span class="badge pass">VP ✓</span><span class="badge pass">AP ✓</span><span class="badge pass">C ✓</span><span class="badge fail">J ✗</span></div><p class="review-note">Rebuttal-stage blind-review round.</p>
 </div></section>
 </div>
 </article>
@@ -555,12 +554,12 @@ footer { color:var(--muted); border-top:1px solid var(--line); margin-top:44px; 
 </div><div class="video-block added-baseline">
 <div class="video-label">Kiwi-Edit to CoherentAVEdit cascade</div>
 <video controls="" playsinline="" preload="metadata" src="media/n2_05_qA_kiwi_cascade.mp4"></video>
-<div class="badges"><span class="badge neutral">not human-rated on this page</span></div>
+<div class="badges"><span class="badge pass">VR ✓</span><span class="badge fail">AR ✗</span><span class="badge pass">VP ✓</span><span class="badge fail">AP ✗</span><span class="badge fail">C ✗</span><span class="badge fail">J ✗</span></div><p class="review-note">Rebuttal-stage blind-review round.</p>
 <p class="review-note">Format note, not a score: browsers cannot play this system's MP4V output, so this copy was re-encoded to H.264 for playback; the audio is unchanged.</p>
 </div><div class="video-block added-baseline">
 <div class="video-label">LTX-2.5 no-LoRA</div>
 <video controls="" playsinline="" preload="metadata" src="media/n2_05_qA_ltx_nolora.mp4"></video>
-<div class="badges"><span class="badge neutral">not human-rated on this page</span></div>
+<div class="badges"><span class="badge fail">VR ✗</span><span class="badge fail">AR ✗</span><span class="badge pass">VP ✓</span><span class="badge pass">AP ✓</span><span class="badge pass">C ✓</span><span class="badge fail">J ✗</span></div><p class="review-note">Rebuttal-stage blind-review round.</p>
 </div></section>
 <section class="query">
 <h4>qB: Remove the trumpet music from the scene: erase it from the video and remove its sound from the audio, while keeping everything else, including the background and all other sounds, unchanged.</h4>
@@ -598,12 +597,12 @@ footer { color:var(--muted); border-top:1px solid var(--line); margin-top:44px; 
 </div><div class="video-block added-baseline">
 <div class="video-label">Kiwi-Edit to CoherentAVEdit cascade</div>
 <video controls="" playsinline="" preload="metadata" src="media/n2_05_qB_kiwi_cascade.mp4"></video>
-<div class="badges"><span class="badge neutral">not human-rated on this page</span></div>
+<div class="badges"><span class="badge fail">VR ✗</span><span class="badge fail">AR ✗</span><span class="badge pass">VP ✓</span><span class="badge fail">AP ✗</span><span class="badge fail">C ✗</span><span class="badge fail">J ✗</span></div><p class="review-note">Rebuttal-stage blind-review round.</p>
 <p class="review-note">Format note, not a score: browsers cannot play this system's MP4V output, so this copy was re-encoded to H.264 for playback; the audio is unchanged.</p>
 </div><div class="video-block added-baseline">
 <div class="video-label">LTX-2.5 no-LoRA</div>
 <video controls="" playsinline="" preload="metadata" src="media/n2_05_qB_ltx_nolora.mp4"></video>
-<div class="badges"><span class="badge neutral">not human-rated on this page</span></div>
+<div class="badges"><span class="badge fail">VR ✗</span><span class="badge fail">AR ✗</span><span class="badge pass">VP ✓</span><span class="badge pass">AP ✓</span><span class="badge pass">C ✓</span><span class="badge fail">J ✗</span></div><p class="review-note">Rebuttal-stage blind-review round.</p>
 </div></section>
 </div>
 </article>
@@ -663,12 +662,12 @@ footer { color:var(--muted); border-top:1px solid var(--line); margin-top:44px; 
 </div><div class="video-block added-baseline">
 <div class="video-label">Kiwi-Edit to CoherentAVEdit cascade</div>
 <video controls="" playsinline="" preload="metadata" src="media/n2_06_qA_kiwi_cascade.mp4"></video>
-<div class="badges"><span class="badge neutral">not human-rated on this page</span></div>
+<div class="badges"><span class="badge fail">VR ✗</span><span class="badge fail">AR ✗</span><span class="badge pass">VP ✓</span><span class="badge fail">AP ✗</span><span class="badge fail">C ✗</span><span class="badge fail">J ✗</span><span class="badge fail">wrong source: audio</span></div><p class="review-note">Rebuttal-stage blind-review round.</p>
 <p class="review-note">Format note, not a score: browsers cannot play this system's MP4V output, so this copy was re-encoded to H.264 for playback; the audio is unchanged.</p>
 </div><div class="video-block added-baseline">
 <div class="video-label">LTX-2.5 no-LoRA</div>
 <video controls="" playsinline="" preload="metadata" src="media/n2_06_qA_ltx_nolora.mp4"></video>
-<div class="badges"><span class="badge neutral">not human-rated on this page</span></div>
+<div class="badges"><span class="badge fail">VR ✗</span><span class="badge fail">AR ✗</span><span class="badge pass">VP ✓</span><span class="badge pass">AP ✓</span><span class="badge pass">C ✓</span><span class="badge fail">J ✗</span></div><p class="review-note">Rebuttal-stage blind-review round.</p>
 </div></section>
 <section class="query">
 <h4>qB: Remove the electric bass music from the scene: erase it from the video and remove its sound from the audio, while keeping everything else, including the background and all other sounds, unchanged.</h4>
@@ -709,12 +708,12 @@ footer { color:var(--muted); border-top:1px solid var(--line); margin-top:44px; 
 </div><div class="video-block added-baseline">
 <div class="video-label">Kiwi-Edit to CoherentAVEdit cascade</div>
 <video controls="" playsinline="" preload="metadata" src="media/n2_06_qB_kiwi_cascade.mp4"></video>
-<div class="badges"><span class="badge neutral">not human-rated on this page</span></div>
+<div class="badges"><span class="badge fail">VR ✗</span><span class="badge fail">AR ✗</span><span class="badge pass">VP ✓</span><span class="badge fail">AP ✗</span><span class="badge fail">C ✗</span><span class="badge fail">J ✗</span><span class="badge fail">wrong source: audio</span></div><p class="review-note">Rebuttal-stage blind-review round.</p>
 <p class="review-note">Format note, not a score: browsers cannot play this system's MP4V output, so this copy was re-encoded to H.264 for playback; the audio is unchanged.</p>
 </div><div class="video-block added-baseline">
 <div class="video-label">LTX-2.5 no-LoRA</div>
 <video controls="" playsinline="" preload="metadata" src="media/n2_06_qB_ltx_nolora.mp4"></video>
-<div class="badges"><span class="badge neutral">not human-rated on this page</span></div>
+<div class="badges"><span class="badge fail">VR ✗</span><span class="badge fail">AR ✗</span><span class="badge pass">VP ✓</span><span class="badge pass">AP ✓</span><span class="badge pass">C ✓</span><span class="badge fail">J ✗</span></div><p class="review-note">Rebuttal-stage blind-review round.</p>
 </div></section>
 </div>
 </article>
@@ -772,12 +771,12 @@ footer { color:var(--muted); border-top:1px solid var(--line); margin-top:44px; 
 </div><div class="video-block added-baseline">
 <div class="video-label">Kiwi-Edit to CoherentAVEdit cascade</div>
 <video controls="" playsinline="" preload="metadata" src="media/n2_07_qA_kiwi_cascade.mp4"></video>
-<div class="badges"><span class="badge neutral">not human-rated on this page</span></div>
+<div class="badges"><span class="badge fail">VR ✗</span><span class="badge fail">AR ✗</span><span class="badge pass">VP ✓</span><span class="badge fail">AP ✗</span><span class="badge fail">C ✗</span><span class="badge fail">J ✗</span></div><p class="review-note">Rebuttal-stage blind-review round.</p>
 <p class="review-note">Format note, not a score: browsers cannot play this system's MP4V output, so this copy was re-encoded to H.264 for playback; the audio is unchanged.</p>
 </div><div class="video-block added-baseline">
 <div class="video-label">LTX-2.5 no-LoRA</div>
 <video controls="" playsinline="" preload="metadata" src="media/n2_07_qA_ltx_nolora.mp4"></video>
-<div class="badges"><span class="badge neutral">not human-rated on this page</span></div>
+<div class="badges"><span class="badge fail">VR ✗</span><span class="badge fail">AR ✗</span><span class="badge pass">VP ✓</span><span class="badge pass">AP ✓</span><span class="badge pass">C ✓</span><span class="badge fail">J ✗</span></div><p class="review-note">Rebuttal-stage blind-review round.</p>
 </div></section>
 <section class="query">
 <h4>qB: Remove the banjo music from the scene: erase it from the video and remove its sound from the audio, while keeping everything else, including the background and all other sounds, unchanged.</h4>
@@ -815,12 +814,12 @@ footer { color:var(--muted); border-top:1px solid var(--line); margin-top:44px; 
 </div><div class="video-block added-baseline">
 <div class="video-label">Kiwi-Edit to CoherentAVEdit cascade</div>
 <video controls="" playsinline="" preload="metadata" src="media/n2_07_qB_kiwi_cascade.mp4"></video>
-<div class="badges"><span class="badge neutral">not human-rated on this page</span></div>
+<div class="badges"><span class="badge fail">VR ✗</span><span class="badge fail">AR ✗</span><span class="badge pass">VP ✓</span><span class="badge fail">AP ✗</span><span class="badge fail">C ✗</span><span class="badge fail">J ✗</span></div><p class="review-note">Rebuttal-stage blind-review round.</p>
 <p class="review-note">Format note, not a score: browsers cannot play this system's MP4V output, so this copy was re-encoded to H.264 for playback; the audio is unchanged.</p>
 </div><div class="video-block added-baseline">
 <div class="video-label">LTX-2.5 no-LoRA</div>
 <video controls="" playsinline="" preload="metadata" src="media/n2_07_qB_ltx_nolora.mp4"></video>
-<div class="badges"><span class="badge neutral">not human-rated on this page</span></div>
+<div class="badges"><span class="badge fail">VR ✗</span><span class="badge fail">AR ✗</span><span class="badge pass">VP ✓</span><span class="badge pass">AP ✓</span><span class="badge pass">C ✓</span><span class="badge fail">J ✗</span></div><p class="review-note">Rebuttal-stage blind-review round.</p>
 </div></section>
 </div>
 </article>
@@ -877,12 +876,12 @@ footer { color:var(--muted); border-top:1px solid var(--line); margin-top:44px; 
 </div><div class="video-block added-baseline">
 <div class="video-label">Kiwi-Edit to CoherentAVEdit cascade</div>
 <video controls="" playsinline="" preload="metadata" src="media/n2_08_qA_kiwi_cascade.mp4"></video>
-<div class="badges"><span class="badge neutral">not human-rated on this page</span></div>
+<div class="badges"><span class="badge fail">VR ✗</span><span class="badge fail">AR ✗</span><span class="badge fail">VP ✗</span><span class="badge fail">AP ✗</span><span class="badge fail">C ✗</span><span class="badge fail">J ✗</span><span class="badge fail">wrong source: video</span><span class="badge fail">wrong source: audio</span></div><p class="review-note">Rebuttal-stage blind-review round.</p>
 <p class="review-note">Format note, not a score: browsers cannot play this system's MP4V output, so this copy was re-encoded to H.264 for playback; the audio is unchanged.</p>
 </div><div class="video-block added-baseline">
 <div class="video-label">LTX-2.5 no-LoRA</div>
 <video controls="" playsinline="" preload="metadata" src="media/n2_08_qA_ltx_nolora.mp4"></video>
-<div class="badges"><span class="badge neutral">not human-rated on this page</span></div>
+<div class="badges"><span class="badge fail">VR ✗</span><span class="badge fail">AR ✗</span><span class="badge pass">VP ✓</span><span class="badge pass">AP ✓</span><span class="badge pass">C ✓</span><span class="badge fail">J ✗</span></div><p class="review-note">Rebuttal-stage blind-review round.</p>
 </div></section>
 <section class="query">
 <h4>qB: Remove the pipa music from the scene: erase it from the video and remove its sound from the audio, while keeping everything else, including the background and all other sounds, unchanged.</h4>
@@ -921,12 +920,12 @@ footer { color:var(--muted); border-top:1px solid var(--line); margin-top:44px; 
 </div><div class="video-block added-baseline">
 <div class="video-label">Kiwi-Edit to CoherentAVEdit cascade</div>
 <video controls="" playsinline="" preload="metadata" src="media/n2_08_qB_kiwi_cascade.mp4"></video>
-<div class="badges"><span class="badge neutral">not human-rated on this page</span></div>
+<div class="badges"><span class="badge pass">VR ✓</span><span class="badge fail">AR ✗</span><span class="badge pass">VP ✓</span><span class="badge fail">AP ✗</span><span class="badge fail">C ✗</span><span class="badge fail">J ✗</span><span class="badge fail">wrong source: audio</span></div><p class="review-note">Rebuttal-stage blind-review round.</p>
 <p class="review-note">Format note, not a score: browsers cannot play this system's MP4V output, so this copy was re-encoded to H.264 for playback; the audio is unchanged.</p>
 </div><div class="video-block added-baseline">
 <div class="video-label">LTX-2.5 no-LoRA</div>
 <video controls="" playsinline="" preload="metadata" src="media/n2_08_qB_ltx_nolora.mp4"></video>
-<div class="badges"><span class="badge neutral">not human-rated on this page</span></div>
+<div class="badges"><span class="badge fail">VR ✗</span><span class="badge fail">AR ✗</span><span class="badge pass">VP ✓</span><span class="badge pass">AP ✓</span><span class="badge pass">C ✓</span><span class="badge fail">J ✗</span></div><p class="review-note">Rebuttal-stage blind-review round.</p>
 </div></section>
 </div>
 </article>
@@ -982,12 +981,12 @@ footer { color:var(--muted); border-top:1px solid var(--line); margin-top:44px; 
 </div><div class="video-block added-baseline">
 <div class="video-label">Kiwi-Edit to CoherentAVEdit cascade</div>
 <video controls="" playsinline="" preload="metadata" src="media/n2_09_qA_kiwi_cascade.mp4"></video>
-<div class="badges"><span class="badge neutral">not human-rated on this page</span></div>
+<div class="badges"><span class="badge fail">VR ✗</span><span class="badge fail">AR ✗</span><span class="badge pass">VP ✓</span><span class="badge fail">AP ✗</span><span class="badge fail">C ✗</span><span class="badge fail">J ✗</span><span class="badge fail">wrong source: audio</span></div><p class="review-note">Rebuttal-stage blind-review round.</p>
 <p class="review-note">Format note, not a score: browsers cannot play this system's MP4V output, so this copy was re-encoded to H.264 for playback; the audio is unchanged.</p>
 </div><div class="video-block added-baseline">
 <div class="video-label">LTX-2.5 no-LoRA</div>
 <video controls="" playsinline="" preload="metadata" src="media/n2_09_qA_ltx_nolora.mp4"></video>
-<div class="badges"><span class="badge neutral">not human-rated on this page</span></div>
+<div class="badges"><span class="badge fail">VR ✗</span><span class="badge fail">AR ✗</span><span class="badge pass">VP ✓</span><span class="badge pass">AP ✓</span><span class="badge pass">C ✓</span><span class="badge fail">J ✗</span></div><p class="review-note">Rebuttal-stage blind-review round.</p>
 </div></section>
 <section class="query">
 <h4>qB: Remove the ukulele music from the scene: erase it from the video and remove its sound from the audio, while keeping everything else, including the background and all other sounds, unchanged.</h4>
@@ -1026,12 +1025,12 @@ footer { color:var(--muted); border-top:1px solid var(--line); margin-top:44px; 
 </div><div class="video-block added-baseline">
 <div class="video-label">Kiwi-Edit to CoherentAVEdit cascade</div>
 <video controls="" playsinline="" preload="metadata" src="media/n2_09_qB_kiwi_cascade.mp4"></video>
-<div class="badges"><span class="badge neutral">not human-rated on this page</span></div>
+<div class="badges"><span class="badge fail">VR ✗</span><span class="badge fail">AR ✗</span><span class="badge pass">VP ✓</span><span class="badge fail">AP ✗</span><span class="badge fail">C ✗</span><span class="badge fail">J ✗</span><span class="badge fail">wrong source: audio</span></div><p class="review-note">Rebuttal-stage blind-review round.</p>
 <p class="review-note">Format note, not a score: browsers cannot play this system's MP4V output, so this copy was re-encoded to H.264 for playback; the audio is unchanged.</p>
 </div><div class="video-block added-baseline">
 <div class="video-label">LTX-2.5 no-LoRA</div>
 <video controls="" playsinline="" preload="metadata" src="media/n2_09_qB_ltx_nolora.mp4"></video>
-<div class="badges"><span class="badge neutral">not human-rated on this page</span></div>
+<div class="badges"><span class="badge fail">VR ✗</span><span class="badge fail">AR ✗</span><span class="badge pass">VP ✓</span><span class="badge pass">AP ✓</span><span class="badge pass">C ✓</span><span class="badge fail">J ✗</span></div><p class="review-note">Rebuttal-stage blind-review round.</p>
 </div></section>
 </div>
 </article>
@@ -1089,12 +1088,12 @@ footer { color:var(--muted); border-top:1px solid var(--line); margin-top:44px; 
 </div><div class="video-block added-baseline">
 <div class="video-label">Kiwi-Edit to CoherentAVEdit cascade</div>
 <video controls="" playsinline="" preload="metadata" src="media/n2_10_qA_kiwi_cascade.mp4"></video>
-<div class="badges"><span class="badge neutral">not human-rated on this page</span></div>
+<div class="badges"><span class="badge pass">VR ✓</span><span class="badge fail">AR ✗</span><span class="badge pass">VP ✓</span><span class="badge fail">AP ✗</span><span class="badge fail">C ✗</span><span class="badge fail">J ✗</span></div><p class="review-note">Rebuttal-stage blind-review round.</p>
 <p class="review-note">Format note, not a score: browsers cannot play this system's MP4V output, so this copy was re-encoded to H.264 for playback; the audio is unchanged.</p>
 </div><div class="video-block added-baseline">
 <div class="video-label">LTX-2.5 no-LoRA</div>
 <video controls="" playsinline="" preload="metadata" src="media/n2_10_qA_ltx_nolora.mp4"></video>
-<div class="badges"><span class="badge neutral">not human-rated on this page</span></div>
+<div class="badges"><span class="badge fail">VR ✗</span><span class="badge fail">AR ✗</span><span class="badge pass">VP ✓</span><span class="badge pass">AP ✓</span><span class="badge pass">C ✓</span><span class="badge fail">J ✗</span></div><p class="review-note">Rebuttal-stage blind-review round.</p>
 </div></section>
 <section class="query">
 <h4>qB: Remove the erhu music from the scene: erase it from the video and remove its sound from the audio, while keeping everything else, including the background and all other sounds, unchanged.</h4>
@@ -1132,12 +1131,12 @@ footer { color:var(--muted); border-top:1px solid var(--line); margin-top:44px; 
 </div><div class="video-block added-baseline">
 <div class="video-label">Kiwi-Edit to CoherentAVEdit cascade</div>
 <video controls="" playsinline="" preload="metadata" src="media/n2_10_qB_kiwi_cascade.mp4"></video>
-<div class="badges"><span class="badge neutral">not human-rated on this page</span></div>
+<div class="badges"><span class="badge fail">VR ✗</span><span class="badge fail">AR ✗</span><span class="badge pass">VP ✓</span><span class="badge fail">AP ✗</span><span class="badge pass">C ✓</span><span class="badge fail">J ✗</span></div><p class="review-note">Rebuttal-stage blind-review round.</p>
 <p class="review-note">Format note, not a score: browsers cannot play this system's MP4V output, so this copy was re-encoded to H.264 for playback; the audio is unchanged.</p>
 </div><div class="video-block added-baseline">
 <div class="video-label">LTX-2.5 no-LoRA</div>
 <video controls="" playsinline="" preload="metadata" src="media/n2_10_qB_ltx_nolora.mp4"></video>
-<div class="badges"><span class="badge neutral">not human-rated on this page</span></div>
+<div class="badges"><span class="badge fail">VR ✗</span><span class="badge fail">AR ✗</span><span class="badge pass">VP ✓</span><span class="badge pass">AP ✓</span><span class="badge pass">C ✓</span><span class="badge fail">J ✗</span></div><p class="review-note">Rebuttal-stage blind-review round.</p>
 </div></section>
 </div>
 </article>
@@ -1184,7 +1183,6 @@ footer { color:var(--muted); border-top:1px solid var(--line); margin-top:44px; 
 <span class="badge pass">C ✓</span>
 <span class="badge fail">J ✗</span>
 </div>
-
 </div>
 <div class="video-block added-baseline">
 <div class="video-label">InstructAV2AV</div>
@@ -1194,12 +1192,12 @@ footer { color:var(--muted); border-top:1px solid var(--line); margin-top:44px; 
 </div><div class="video-block added-baseline">
 <div class="video-label">Kiwi-Edit to CoherentAVEdit cascade</div>
 <video controls="" playsinline="" preload="metadata" src="media/n2_11_qA_kiwi_cascade.mp4"></video>
-<div class="badges"><span class="badge neutral">not human-rated on this page</span></div>
+<div class="badges"><span class="badge pass">VR ✓</span><span class="badge fail">AR ✗</span><span class="badge pass">VP ✓</span><span class="badge fail">AP ✗</span><span class="badge fail">C ✗</span><span class="badge fail">J ✗</span><span class="badge fail">wrong source: audio</span></div><p class="review-note">Rebuttal-stage blind-review round.</p>
 <p class="review-note">Format note, not a score: browsers cannot play this system's MP4V output, so this copy was re-encoded to H.264 for playback; the audio is unchanged.</p>
 </div><div class="video-block added-baseline">
 <div class="video-label">LTX-2.5 no-LoRA</div>
 <video controls="" playsinline="" preload="metadata" src="media/n2_11_qA_ltx_nolora.mp4"></video>
-<div class="badges"><span class="badge neutral">not human-rated on this page</span></div>
+<div class="badges"><span class="badge fail">VR ✗</span><span class="badge fail">AR ✗</span><span class="badge pass">VP ✓</span><span class="badge pass">AP ✓</span><span class="badge pass">C ✓</span><span class="badge fail">J ✗</span></div><p class="review-note">Rebuttal-stage blind-review round.</p>
 </div></section>
 <section class="query">
 <h4>qB: Remove the xylophone music from the scene: erase it from the video and remove its sound from the audio, while keeping everything else, including the background and all other sounds, unchanged.</h4>
@@ -1238,12 +1236,12 @@ footer { color:var(--muted); border-top:1px solid var(--line); margin-top:44px; 
 </div><div class="video-block added-baseline">
 <div class="video-label">Kiwi-Edit to CoherentAVEdit cascade</div>
 <video controls="" playsinline="" preload="metadata" src="media/n2_11_qB_kiwi_cascade.mp4"></video>
-<div class="badges"><span class="badge neutral">not human-rated on this page</span></div>
+<div class="badges"><span class="badge fail">VR ✗</span><span class="badge fail">AR ✗</span><span class="badge fail">VP ✗</span><span class="badge fail">AP ✗</span><span class="badge fail">C ✗</span><span class="badge fail">J ✗</span><span class="badge fail">wrong source: video</span><span class="badge fail">wrong source: audio</span></div><p class="review-note">Rebuttal-stage blind-review round.</p>
 <p class="review-note">Format note, not a score: browsers cannot play this system's MP4V output, so this copy was re-encoded to H.264 for playback; the audio is unchanged.</p>
 </div><div class="video-block added-baseline">
 <div class="video-label">LTX-2.5 no-LoRA</div>
 <video controls="" playsinline="" preload="metadata" src="media/n2_11_qB_ltx_nolora.mp4"></video>
-<div class="badges"><span class="badge neutral">not human-rated on this page</span></div>
+<div class="badges"><span class="badge fail">VR ✗</span><span class="badge fail">AR ✗</span><span class="badge pass">VP ✓</span><span class="badge pass">AP ✓</span><span class="badge pass">C ✓</span><span class="badge fail">J ✗</span></div><p class="review-note">Rebuttal-stage blind-review round.</p>
 </div></section>
 </div>
 </article>
