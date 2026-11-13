@@ -48,6 +48,7 @@ footer { color:var(--muted); border-top:1px solid var(--line); margin-top:44px; 
 .video-block { min-width:0; }
 .neutral { color:var(--muted); }
 .review-note { margin:5px 0 0; color:var(--muted); font-size:.78rem; }
+.badge.info{background:#eef2f7;color:#26384a;border:1px solid #c9d3df}audio{width:100%;margin-top:4px}
 </style>
 </head>
 <body>
@@ -1246,9 +1247,83 @@ footer { color:var(--muted); border-top:1px solid var(--line); margin-top:44px; 
 </div>
 </article>
 </section>
+<section>
+<h2>3. Speech mixtures</h2>
+<p class="section-intro">Real single-speaker AVSpeech recordings mixed with a second speaker or with a MUSIC-AVQA instrument. Each example shows one query on which AV-IRE removes the requested source in both the video and the audio, with the two baselines on the same query. These are selected successes. The aggregate speech results, including the two-speaker cases where AV-IRE keeps the wrong speaker, are reported in Section 4.5 of the paper.</p>
+<div class="notice"><strong>These badges are automatic checks, not blind ratings.</strong> Video: the picture changes at least twice as much at the requested performer as at the other one. Audio: for two speakers, the output is closer, by WavLM speaker similarity, to the speaker that should stay; WER is measured with Whisper large-v3 against the transcript of the clean voice; near-silent means less than 1 s of audio above -45 dBFS. InstructAV2AV produced audio only for these sets. All files are the exact outputs that were scored.</div>
+<article class="case">
+<div class="case-head">
+<span class="case-number">Example 12</span>
+<code>SSC21 qB</code>
+</div>
+<div class="case-grid">
+<section class="input-column">
+<h4>Input</h4>
+<div class="video-block">
+<div class="video-label">Mixed input</div>
+<video controls="" playsinline="" preload="metadata" src="media/sp_12_input.mp4"></video>
+<div class="badges"></div>
+</div>
+</section>
+<section class="query">
+<h4>qB: Remove the person on the left from the scene: erase it from the video and remove its sound from the audio, while keeping everything else, including the background and all other sounds, unchanged.</h4>
+<div class="video-block">
+<div class="video-label">AV-IRE (ours)</div>
+<video controls="" playsinline="" preload="metadata" src="media/sp_12_qB_ours.mp4"></video>
+<div class="badges"><span class="badge pass">video: requested performer removed ✓</span><span class="badge pass">audio: requested speaker kept ✓</span></div>
+</div>
+<div class="video-block">
+<div class="video-label">Task-adapted LTX-2.5 (same-backbone control)</div>
+<video controls="" playsinline="" preload="metadata" src="media/sp_12_qB_control.mp4"></video>
+<div class="badges"><span class="badge fail">video: the other performer removed ✗</span><span class="badge fail">audio: near-silent ✗</span></div>
+</div>
+<div class="video-block">
+<div class="video-label">InstructAV2AV (audio output only)</div>
+<audio controls="" preload="metadata" src="media/sp_12_qB_iav.wav"></audio>
+<div class="badges"><span class="badge info">video: not produced</span><span class="badge pass">audio: requested speaker kept ✓</span></div>
+</div>
+</section>
+</div>
+</article>
+<article class="case">
+<div class="case-head">
+<span class="case-number">Example 13</span>
+<code>SSM06 qB</code>
+</div>
+<div class="case-grid">
+<section class="input-column">
+<h4>Input</h4>
+<div class="video-block">
+<div class="video-label">Mixed input</div>
+<video controls="" playsinline="" preload="metadata" src="media/sp_13_input.mp4"></video>
+<div class="badges"></div>
+</div>
+</section>
+<section class="query">
+<h4>qB: Remove the congas music from the scene: erase it from the video and remove its sound from the audio, while keeping everything else, including the background and all other sounds, unchanged.</h4>
+<div class="video-block">
+<div class="video-label">AV-IRE (ours)</div>
+<video controls="" playsinline="" preload="metadata" src="media/sp_13_qB_ours.mp4"></video>
+<div class="badges"><span class="badge pass">video: requested performer removed ✓</span><span class="badge info">audio: kept speech WER 0.13</span><span class="badge info">similarity to kept voice 0.98</span></div>
+</div>
+<div class="video-block">
+<div class="video-label">Task-adapted LTX-2.5 (same-backbone control)</div>
+<video controls="" playsinline="" preload="metadata" src="media/sp_13_qB_control.mp4"></video>
+<div class="badges"><span class="badge fail">video: the other performer removed ✗</span><span class="badge info">audio: kept speech WER 0.93</span><span class="badge info">similarity to kept voice 0.52</span></div>
+</div>
+<div class="video-block">
+<div class="video-label">InstructAV2AV (audio output only)</div>
+<audio controls="" preload="metadata" src="media/sp_13_qB_iav.wav"></audio>
+<div class="badges"><span class="badge info">video: not produced</span><span class="badge fail">audio: near-silent ✗</span></div>
+</div>
+</section>
+</div>
+</article>
+</section>
 <footer>
 <p>
 <strong>Media attribution and license.</strong> Source: MUSIC-AVQA. Short source clips and edited derivatives are provided under CC BY-NC 4.0 for non-commercial research use. Edited outputs constitute changes to the source clips. This presentation does not imply endorsement by the dataset creators.</p>
+<p><strong>Speech clips.</strong> The speech recordings in Section 3 come from AVSpeech YouTube videos. They are shown for review only and will be removed from this page after the review period. This presentation does not imply endorsement by the dataset creators or the people shown.</p>
 </footer>
 </main>
 <script>
